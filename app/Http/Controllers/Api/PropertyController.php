@@ -2,12 +2,14 @@
 
 namespace App\Http\Controllers\Api;
 
+use App\Exceptions\BaseException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Property\StorePropertyRequest;
 use App\Http\Resources\Api\Property\PropertyResource;
 use App\Models\Property;
 use App\Service\ResponseJSON;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class PropertyController extends Controller
 {
@@ -50,6 +52,8 @@ class PropertyController extends Controller
 
     public function destroy(Property $property)
     {
+        Gate::authorize('delete', $property);
+
         $property->delete();
 
         return response()->noContent();

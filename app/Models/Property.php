@@ -2,10 +2,15 @@
 
 namespace App\Models;
 
+use App\Exceptions\BaseException;
+use App\Policies\PropertyPolicy;
+use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
+use Illuminate\Support\Facades\Gate;
 
+#[UsePolicy(PropertyPolicy::class)]
 class Property extends Model
 {
     /** @use HasFactory<\Database\Factories\PropertyFactory> */
@@ -28,6 +33,8 @@ class Property extends Model
 
     public function newProperty(array $attributes = [])
     {
+        Gate::authorize('create', Property::class);
+
         $property = self::create($attributes);
 
         if (!empty($attributes['image'])) {
@@ -43,6 +50,8 @@ class Property extends Model
 
     public function list(string $sortBy = 'id', string $sortOrder = 'asc', ?string $discountFilter = null)
     {
+        Gate::authorize('viewAny', Property::class);
+
         $sortBy = in_array($sortBy, ['id', 'name', 'regularPrice', 'discount']) ? $sortBy : 'id';
 
         $sortOrder = in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'asc';
@@ -63,6 +72,8 @@ class Property extends Model
 
     public function updateProperty(array $attributes = [])
     {
+        Gate::authorize('update', $this);
+
         if (!empty($attributes['image'])) {
             $attributes['image'] = $attributes['image']->store('properties', 'public');
         }
@@ -73,6 +84,4 @@ class Property extends Model
 
         return $this;
     }
-
-
 }

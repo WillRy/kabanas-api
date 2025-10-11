@@ -30,6 +30,8 @@ class AuthController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
+        $abilities = $user->roles->flatMap->permissions->pluck('name')->toArray();
+
         $token = $user->createToken('auth_token')->plainTextToken;
 
         return ResponseJSON::getInstance()
@@ -38,6 +40,7 @@ class AuthController extends Controller
                 'user' => new UserResource($user),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
+                'abilities' => $abilities,
             ])
             ->setStatusCode(201)
             ->render();
