@@ -3,6 +3,7 @@
 namespace Database\Seeders;
 
 use App\Models\Property;
+use App\Models\Setting;
 use App\Models\User;
 // use Illuminate\Database\Console\Seeds\WithoutModelEvents;
 use Illuminate\Database\Seeder;
@@ -40,5 +41,12 @@ class DatabaseSeeder extends Seeder
             $property->image = $url;
             $property->save();
         });
+
+        Setting::firstOrCreate([
+            'minBookingLength' => 1,
+            'maxBookingLength' => 30,
+            'maxGuestsPerBooking' => 10,
+            'breakfastPrice' => 15.00
+        ]);
     }
 }

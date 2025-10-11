@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\PropertyController;
+use App\Http\Controllers\Api\SettingController;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:sanctum');
@@ -18,4 +19,10 @@ Route::group(['prefix' => 'property', 'middleware' => ['auth:sanctum']], functio
     Route::get('/', [PropertyController::class, 'index']);
     Route::post('/{property}', [PropertyController::class, 'update']);
     Route::delete('/{property}', [PropertyController::class, 'destroy']);
+});
+
+
+Route::group(['prefix' => 'setting', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [SettingController::class, 'index']);
+    Route::put('/', [SettingController::class, 'update']);
 });
