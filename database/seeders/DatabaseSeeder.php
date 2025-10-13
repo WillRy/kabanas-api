@@ -2,6 +2,8 @@
 
 namespace Database\Seeders;
 
+use App\Models\Booking;
+use App\Models\Guest;
 use App\Models\Permission;
 use App\Models\Property;
 use App\Models\Role;
@@ -25,6 +27,9 @@ class DatabaseSeeder extends Seeder
         $manageProperties = Permission::firstOrCreate(['name' => 'manage-properties']);
         $manageSettings = Permission::firstOrCreate(['name' => 'manage-settings']);
         $manageBookings = Permission::firstOrCreate(['name' => 'manage-bookings']);
+        $manageSettings = Permission::firstOrCreate(['name' => 'settings']);
+
+        $guestRole = Role::firstOrCreate(['name' => 'guest']);
 
         $manager->permissions()->syncWithoutDetaching([$manageProperties->id, $manageSettings->id, $manageBookings->id]);
 
@@ -43,15 +48,15 @@ class DatabaseSeeder extends Seeder
         $admin->roles()->syncWithoutDetaching([$manager->id]);
 
         Property::factory(50)->make()->each(function ($property) {
-            $rand = "00".mt_rand(1, 8);
+            $rand = "00" . mt_rand(1, 8);
 
             $src = storage_path("demo/properties/cabin-{$rand}.jpg");
 
-            $destPath = "properties/cabin-{$rand}.jpg";
+            $destPath = "/properties/cabin-{$rand}.jpg";
 
             if (file_exists($src)) {
                 Storage::disk('public')->put($destPath, file_get_contents($src));
-                $url = Storage::url($destPath);
+                $url = $destPath;
             } else {
                 $url = null;
             }
@@ -67,5 +72,20 @@ class DatabaseSeeder extends Seeder
             'maxGuestsPerBooking' => 10,
             'breakfastPrice' => 15.00
         ]);
+
+        User::factory(50)->create()->each(function ($user) use ($guestRole) {
+            $user->roles()->syncWithoutDetaching([$guestRole->id]);
+
+
+            Guest::factory(1)->create([
+                'user_id' => $user->id,
+            ]);
+
+
+            Booking::factory(1)->create([
+                'guest_id' => $user->guestProfile->id,
+                'property_id' => Property::inRandomOrder()->first()->id,
+            ]);
+        });
     }
 }

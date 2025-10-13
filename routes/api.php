@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\Api\AuthController;
+use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\SettingController;
 use Illuminate\Support\Facades\Route;
@@ -15,12 +16,18 @@ Route::group(['prefix' => 'auth'], function () {
 });
 
 Route::group(['prefix' => 'property', 'middleware' => ['auth:sanctum']], function () {
-    Route::post('/', [PropertyController::class, 'store']);
     Route::get('/', [PropertyController::class, 'index']);
+    Route::post('/', [PropertyController::class, 'store']);
     Route::post('/{property}', [PropertyController::class, 'update']);
     Route::delete('/{property}', [PropertyController::class, 'destroy']);
 });
 
+Route::group(['prefix' => 'bookings', 'middleware' => ['auth:sanctum']], function () {
+    Route::get('/', [BookingController::class, 'index']);
+    Route::put('/{booking}/check-in', [BookingController::class, 'checkIn']);
+    Route::put('/{booking}/check-out', [BookingController::class, 'checkOut']);
+    Route::get('/stats', [BookingController::class, 'stats']);
+});
 
 Route::group(['prefix' => 'setting', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [SettingController::class, 'index']);

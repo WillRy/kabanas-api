@@ -9,6 +9,7 @@ use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
+use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Facades\Hash;
@@ -67,6 +68,11 @@ class User extends Authenticatable
     public function permissions(): HasManyThrough
     {
         return $this->hasManyThrough(Permission::class, Role::class);
+    }
+
+    public function guestProfile(): HasOne
+    {
+        return $this->hasOne(Guest::class);
     }
 
     public function resetPasswordWithOtp(string $email, string $otp, string $newPassword): void

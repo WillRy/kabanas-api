@@ -36,7 +36,7 @@ class SettingPolicy
     /**
      * Determine whether the user can update the model.
      */
-    public function update(User $user, Setting $setting): bool
+    public function update(User $user): bool
     {
         $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
         return in_array('settings', $permissions, true);
