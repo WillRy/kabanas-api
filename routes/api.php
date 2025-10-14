@@ -26,6 +26,7 @@ Route::group(['prefix' => 'bookings', 'middleware' => ['auth:sanctum']], functio
     Route::get('/', [BookingController::class, 'index']);
     Route::put('/{booking}/check-in', [BookingController::class, 'checkIn']);
     Route::put('/{booking}/check-out', [BookingController::class, 'checkOut']);
+    Route::delete('/{booking}', [BookingController::class, 'destroy']);
     Route::get('/stats', [BookingController::class, 'stats']);
 });
 

@@ -7,6 +7,7 @@ use App\Http\Resources\Api\Booking\BookingResource;
 use App\Models\Booking;
 use App\Service\ResponseJSON;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Gate;
 
 class BookingController extends Controller
 {
@@ -60,5 +61,14 @@ class BookingController extends Controller
         return ResponseJSON::getInstance()
             ->setData($stats)
             ->render();
+    }
+
+    public function destroy(Booking $booking)
+    {
+        Gate::authorize('delete', $booking);
+
+        $booking->delete();
+
+        return response()->noContent();
     }
 }

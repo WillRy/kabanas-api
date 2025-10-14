@@ -4,6 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Support\Facades\Gate;
 
 class Booking extends Model
@@ -37,14 +38,14 @@ class Booking extends Model
         'isPaid' => 'boolean',
     ];
 
-    public function guest()
+    public function guest(): BelongsTo
     {
         return $this->belongsTo(Guest::class);
     }
 
-    public function property()
+    public function property(): BelongsTo
     {
-        return $this->belongsTo(Property::class);
+        return $this->belongsTo(Property::class)->withTrashed();
     }
 
     public function list(string $sortBy = 'id', string $sortOrder = 'asc', ?string $statusFilter = null)
@@ -67,6 +68,7 @@ class Booking extends Model
                     $query->whereStatus('unconfirmed');
                 }
             })
+            ->with(['guest','guest.user', 'property'])
             ->orderBy($sortBy, $sortOrder)
             ->paginate(10);
     }
