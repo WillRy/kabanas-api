@@ -32,6 +32,7 @@ class BookingResource extends JsonResource
                 'id' => $this->guest->id,
                 'name' => $this->guest->user->name,
                 'email' => $this->guest->user->email,
+                'countryFlag' => mb_strtolower($this->guest->countryFlag),
             ],
             'property' => new PropertyResource($this->property),
             'created_at' => $this->created_at->toDateTimeString(),

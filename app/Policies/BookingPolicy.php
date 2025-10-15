@@ -22,7 +22,7 @@ class BookingPolicy
      */
     public function view(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+       $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
         $canSeeAll = in_array('manage-bookings', $permissions, true);
         $isOwner = $user->guest && $user->guest->id === $booking->guest->guest_id;
 

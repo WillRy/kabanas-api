@@ -58,7 +58,7 @@ class AuthController extends Controller
 
     public function logout(Request $request): Response
     {
-        if (Auth::guard('sanctum')->check()) {
+        if (Auth::guard('sanctum')->check() && $request->bearerToken()) {
             $request->user()->currentAccessToken()->delete();
         }
 

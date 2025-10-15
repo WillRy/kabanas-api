@@ -68,9 +68,17 @@ class Booking extends Model
                     $query->whereStatus('unconfirmed');
                 }
             })
-            ->with(['guest','guest.user', 'property'])
+            ->with(['guest', 'guest.user', 'property'])
             ->orderBy($sortBy, $sortOrder)
             ->paginate(10);
+    }
+
+    public function details(int $bookingId)
+    {
+        return self::query()
+            ->with(['guest', 'guest.user', 'property'])
+            ->where('id', $bookingId)
+            ->first();
     }
 
     public function checkIn()

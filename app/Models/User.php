@@ -12,6 +12,8 @@ use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Database\Eloquent\Relations\HasOne;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
+use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
 use Laravel\Sanctum\HasApiTokens;
 use stdClass;
@@ -30,6 +32,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
+        'avatar'
     ];
 
     /**
@@ -125,5 +128,26 @@ class User extends Authenticatable
         $data->otp = $otp;
 
         return $data;
+    }
+
+    public function updateProfile(array $data)
+    {
+        /** @var App\Models\user $loggedUser */
+        $loggedUser = Auth::user();
+        if(!empty($data["avatar"])) {
+            $data["avatar"] = $data["avatar"]->store("avatars/{$loggedUser->id}", 'public');
+        }
+
+        if(!empty($data['password'])) {
+            $data['password'] = Hash::make($data['password']);
+        }
+
+        if(empty($data['password'])) {
+            unset($data['password']);
+        }
+
+        $loggedUser->fill(Arr::where($data, fn($value, $key) => in_array($key, ['name', 'email', 'password', 'avatar'])));
+
+        $loggedUser->save();
     }
 }

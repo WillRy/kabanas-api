@@ -26,6 +26,17 @@ class BookingController extends Controller
             ->render();
     }
 
+    public function view(int $bookingId)
+    {
+        $booking = (new Booking())->details($bookingId);
+
+        Gate::authorize('view', $booking);
+
+        return ResponseJSON::getInstance()
+            ->setData(new BookingResource($booking))
+            ->render();
+    }
+
     public function checkIn(Request $request, Booking $booking)
     {
         $booking->fill([
