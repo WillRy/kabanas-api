@@ -124,7 +124,6 @@ class Booking extends Model
 
     public function stats(int $numDays)
     {
-        Gate::authorize('stats', $this);
 
         $afterDate = now()->subDays($numDays)->format('Y-m-d');
 
@@ -135,7 +134,7 @@ class Booking extends Model
 
 
         $bookings = self::query()
-            ->select('id', 'startDate', 'endDate', 'numNights', 'totalPrice', 'status', 'created_at')
+            ->select('id', 'startDate', 'endDate', 'numNights', 'totalPrice', 'extrasPrice', 'status', 'created_at')
             ->whereRaw('DATE(created_at) >= ?', [$afterDate])
             ->whereRaw('DATE(created_at) <= ?', [now()->format('Y-m-d')])
             ->get();
@@ -158,5 +157,22 @@ class Booking extends Model
             'confirmedStays' => $confirmedStays,
             'bookings' => $bookings,
         ];
+    }
+
+    public function todayActivities()
+    {
+        return self::query()
+            ->with(['guest', 'guest.user', 'property'])
+            ->where(function($query) {
+                $query->where(function($q) {
+                    $q->whereDate('startDate', now()->format('Y-m-d'))
+                      ->where('status', 'unconfirmed');
+                })->orWhere(function($q) {
+                    $q->whereDate('endDate', now()->format('Y-m-d'))
+                      ->where('status', 'checked-in');
+                });
+            })
+            ->orderBy('created_at', 'asc')
+            ->get();
     }
 }

@@ -25,11 +25,13 @@ Route::group(['prefix' => 'property', 'middleware' => ['auth:sanctum']], functio
 
 Route::group(['prefix' => 'bookings', 'middleware' => ['auth:sanctum']], function () {
     Route::get('/', [BookingController::class, 'index']);
+    Route::get('/stats', [BookingController::class, 'stats']);
+    Route::get('/today-activity', [BookingController::class, 'todayActivity']);
     Route::get('/{booking}', [BookingController::class, 'view']);
     Route::put('/{booking}/check-in', [BookingController::class, 'checkIn']);
     Route::put('/{booking}/check-out', [BookingController::class, 'checkOut']);
     Route::delete('/{booking}', [BookingController::class, 'destroy']);
-    Route::get('/stats', [BookingController::class, 'stats']);
+
 });
 
 Route::group(['prefix' => 'setting', 'middleware' => ['auth:sanctum']], function () {

@@ -82,4 +82,13 @@ class BookingController extends Controller
 
         return response()->noContent();
     }
+
+    public function todayActivity()
+    {
+        $bookings = (new Booking())->todayActivities();
+
+        return ResponseJSON::getInstance()
+            ->setData(BookingResource::collection($bookings))
+            ->render();
+    }
 }

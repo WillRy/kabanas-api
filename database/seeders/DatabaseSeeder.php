@@ -85,6 +85,86 @@ class DatabaseSeeder extends Seeder
             Booking::factory(1)->create([
                 'guest_id' => $user->guestProfile->id,
                 'property_id' => Property::inRandomOrder()->first()->id,
+                'startDate' => now()->subMonth(1)->format('Y-m-d'),
+                'endDate' => now()->subMonth(1)->format('Y-m-d'),
+            ]);
+        });
+
+        // Bookings in last 7 days
+        User::factory(5)->create()->each(function ($user) use ($guestRole) {
+            $user->roles()->syncWithoutDetaching([$guestRole->id]);
+            Guest::factory(1)->create(['user_id' => $user->id]);
+            Booking::factory(1)->create([
+                'guest_id' => $user->guestProfile->id,
+                'property_id' => Property::inRandomOrder()->first()->id,
+                'startDate' => now()->subDays(rand(1, 7))->format('Y-m-d'),
+                'created_at' => now()->subDays(rand(1, 7))->format('Y-m-d'),
+                'endDate' => now()->format('Y-m-d'),
+                'status' => 'checked-out',
+            ]);
+        });
+
+        // Bookings in last 30 days
+        User::factory(3)->create()->each(function ($user) use ($guestRole) {
+            $user->roles()->syncWithoutDetaching([$guestRole->id]);
+            Guest::factory(1)->create(['user_id' => $user->id]);
+            Booking::factory(1)->create([
+                'guest_id' => $user->guestProfile->id,
+                'property_id' => Property::inRandomOrder()->first()->id,
+                'startDate' => now()->subDays(rand(8, 30))->format('Y-m-d'),
+                'created_at' => now()->subDays(rand(8, 30))->format('Y-m-d'),
+                'endDate' => now()->subDays(rand(1, 7))->format('Y-m-d'),
+                'status' => 'checked-out',
+            ]);
+        });
+
+        // Bookings in last 90 days
+        User::factory(2)->create()->each(function ($user) use ($guestRole) {
+            $user->roles()->syncWithoutDetaching([$guestRole->id]);
+            Guest::factory(1)->create(['user_id' => $user->id]);
+            Booking::factory(1)->create([
+                'guest_id' => $user->guestProfile->id,
+                'property_id' => Property::inRandomOrder()->first()->id,
+                'startDate' => now()->subDays(rand(31, 90))->format('Y-m-d'),
+                'created_at' => now()->subDays(rand(31, 90))->format('Y-m-d'),
+                'endDate' => now()->subDays(rand(8, 30))->format('Y-m-d'),
+                'status' => 'checked-out',
+            ]);
+        });
+
+        User::factory(5)->create()->each(function ($user) use ($guestRole) {
+            $user->roles()->syncWithoutDetaching([$guestRole->id]);
+
+
+            Guest::factory(1)->create([
+                'user_id' => $user->id,
+            ]);
+
+
+            Booking::factory(1)->create([
+                'guest_id' => $user->guestProfile->id,
+                'property_id' => Property::inRandomOrder()->first()->id,
+                'startDate' => now()->format('Y-m-d'),
+                'endDate' => now()->addDays(3)->format('Y-m-d'),
+                'status' => 'unconfirmed',
+            ]);
+        });
+
+        User::factory(5)->create()->each(function ($user) use ($guestRole) {
+            $user->roles()->syncWithoutDetaching([$guestRole->id]);
+
+
+            Guest::factory(1)->create([
+                'user_id' => $user->id,
+            ]);
+
+
+            Booking::factory(1)->create([
+                'guest_id' => $user->guestProfile->id,
+                'property_id' => Property::inRandomOrder()->first()->id,
+                'startDate' => now()->subDays(3)->format('Y-m-d'),
+                'endDate' => now()->format('Y-m-d'),
+                'status' => 'checked-in',
             ]);
         });
     }
