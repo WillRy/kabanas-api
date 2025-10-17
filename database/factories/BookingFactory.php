@@ -17,6 +17,7 @@ class BookingFactory extends Factory
     public function definition(): array
     {
         $hasBreakfast = $this->faker->boolean();
+
         return [
             'startDate' => $this->faker->dateTimeBetween('+1 days', '+1 month'),
             'endDate' => $this->faker->dateTimeBetween('+2 days', '+2 months'),

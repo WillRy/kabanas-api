@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Setting;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class SettingPolicy
 {
@@ -29,7 +28,8 @@ class SettingPolicy
      */
     public function create(User $user): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('settings', $permissions, true);
     }
 
@@ -38,7 +38,8 @@ class SettingPolicy
      */
     public function update(User $user): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('settings', $permissions, true);
     }
 
@@ -47,7 +48,8 @@ class SettingPolicy
      */
     public function delete(User $user, Setting $setting): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('settings', $permissions, true);
     }
 
@@ -56,7 +58,8 @@ class SettingPolicy
      */
     public function restore(User $user, Setting $setting): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('settings', $permissions, true);
     }
 
@@ -65,7 +68,8 @@ class SettingPolicy
      */
     public function forceDelete(User $user, Setting $setting): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('settings', $permissions, true);
     }
 }

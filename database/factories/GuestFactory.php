@@ -18,6 +18,7 @@ class GuestFactory extends Factory
     {
         $country = $this->faker->countryCode();
         $countryFlag = "https://flagcdn.com/{$country}.svg";
+
         return [
             'nationalID' => $this->faker->unique()->numerify('###########'),
             'nationality' => $this->faker->country(),

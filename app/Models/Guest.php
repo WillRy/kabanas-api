@@ -15,9 +15,8 @@ class Guest extends Model
     protected $fillable = [
         'nationalID',
         'nationality',
-        'countryFlag'
+        'countryFlag',
     ];
-
 
     public function user(): BelongsTo
     {

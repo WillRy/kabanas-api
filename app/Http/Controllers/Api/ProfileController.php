@@ -7,16 +7,12 @@ use App\Http\Requests\Api\Profile\UpdateCurrentUserProfile;
 use App\Http\Resources\UserResource;
 use App\Models\User;
 use App\Service\ResponseJSON;
-use Illuminate\Http\Request;
-use Illuminate\Support\Facades\Gate;
-use Illuminate\Support\Facades\Response;
 
 class ProfileController extends Controller
 {
-
     public function update(UpdateCurrentUserProfile $request)
     {
-        (new User())->updateProfile($request->all());
+        (new User)->updateProfile($request->all());
 
         return ResponseJSON::getInstance()
             ->setMessage('Profile updated successfully')
@@ -24,5 +20,4 @@ class ProfileController extends Controller
             ->setData(new UserResource($request->user()))
             ->render();
     }
-
 }

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use App\Exceptions\BaseException;
 use App\Policies\PropertyPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
@@ -17,12 +16,12 @@ class Property extends Model
     use HasFactory, SoftDeletes;
 
     protected $fillable = [
-        "name",
-        "maxCapacity",
-        "regularPrice",
-        "discount",
-        "description",
-        "image"
+        'name',
+        'maxCapacity',
+        'regularPrice',
+        'discount',
+        'description',
+        'image',
     ];
 
     protected $casts = [
@@ -30,14 +29,13 @@ class Property extends Model
         'discount' => 'float',
     ];
 
-
     public function newProperty(array $attributes = [])
     {
         Gate::authorize('create', Property::class);
 
         $property = self::create($attributes);
 
-        if (!empty($attributes['image'])) {
+        if (! empty($attributes['image'])) {
             $attributes['image'] = $attributes['image']->store('properties', 'public');
         }
 
@@ -56,8 +54,6 @@ class Property extends Model
 
         $sortOrder = in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'asc';
 
-
-
         return Property::query()
             ->when($discountFilter, function ($query) use ($discountFilter) {
                 if ($discountFilter === 'with-discount') {
@@ -74,7 +70,7 @@ class Property extends Model
     {
         Gate::authorize('update', $this);
 
-        if (!empty($attributes['image'])) {
+        if (! empty($attributes['image'])) {
             $attributes['image'] = $attributes['image']->store('properties', 'public');
         }
 

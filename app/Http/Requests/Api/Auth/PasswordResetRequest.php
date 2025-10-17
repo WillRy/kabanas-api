@@ -29,7 +29,7 @@ class PasswordResetRequest extends FormRequest
                     ->first();
 
                 if (! $user) {
-                    return $fail('The selected ' . $attribute . ' is invalid.');
+                    return $fail('The selected '.$attribute.' is invalid.');
                 }
 
                 $exists = $user->otps()
@@ -38,7 +38,7 @@ class PasswordResetRequest extends FormRequest
                     ->where('expires_at', '>', now())
                     ->exists();
 
-                return $exists ?: $fail('The selected ' . $attribute . ' is invalid or has expired.');
+                return $exists ?: $fail('The selected '.$attribute.' is invalid or has expired.');
             },
             'password' => 'required|string|confirmed|min:6',
         ];

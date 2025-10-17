@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Property;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class PropertyPolicy
 {
@@ -29,7 +28,8 @@ class PropertyPolicy
      */
     public function create(User $user): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-properties', $permissions, true);
     }
 
@@ -38,7 +38,8 @@ class PropertyPolicy
      */
     public function update(User $user, Property $property): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-properties', $permissions, true);
     }
 
@@ -47,7 +48,8 @@ class PropertyPolicy
      */
     public function delete(User $user, Property $property): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-properties', $permissions, true);
     }
 
@@ -56,7 +58,8 @@ class PropertyPolicy
      */
     public function restore(User $user, Property $property): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-properties', $permissions, true);
     }
 
@@ -65,7 +68,8 @@ class PropertyPolicy
      */
     public function forceDelete(User $user, Property $property): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-properties', $permissions, true);
     }
 }

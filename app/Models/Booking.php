@@ -25,7 +25,7 @@ class Booking extends Model
         'isPaid',
         'observations',
         'guest_id',
-        'property_id'
+        'property_id',
     ];
 
     protected $casts = [
@@ -55,8 +55,6 @@ class Booking extends Model
         $sortBy = in_array($sortBy, ['id', 'startDate', 'totalPrice']) ? $sortBy : 'id';
 
         $sortOrder = in_array($sortOrder, ['asc', 'desc']) ? $sortOrder : 'asc';
-
-
 
         return self::query()
             ->when($statusFilter, function ($query) use ($statusFilter) {
@@ -132,7 +130,6 @@ class Booking extends Model
         $confirmedStays = 0;
         $occupancyRate = 0.0;
 
-
         $bookings = self::query()
             ->select('id', 'startDate', 'endDate', 'numNights', 'totalPrice', 'extrasPrice', 'status', 'created_at')
             ->whereRaw('DATE(created_at) >= ?', [$afterDate])
@@ -163,13 +160,13 @@ class Booking extends Model
     {
         return self::query()
             ->with(['guest', 'guest.user', 'property'])
-            ->where(function($query) {
-                $query->where(function($q) {
+            ->where(function ($query) {
+                $query->where(function ($q) {
                     $q->whereDate('startDate', now()->format('Y-m-d'))
-                      ->where('status', 'unconfirmed');
-                })->orWhere(function($q) {
+                        ->where('status', 'unconfirmed');
+                })->orWhere(function ($q) {
                     $q->whereDate('endDate', now()->format('Y-m-d'))
-                      ->where('status', 'checked-in');
+                        ->where('status', 'checked-in');
                 });
             })
             ->orderBy('created_at', 'asc')

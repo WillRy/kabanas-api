@@ -22,7 +22,7 @@ class PropertyResource extends JsonResource
             'regularPrice' => $this->regularPrice,
             'discount' => $this->discount,
             'description' => $this->description,
-            'image' => $this->image ? asset(Storage::url($this->image))  : null,
+            'image' => $this->image ? asset(Storage::url($this->image)) : null,
             'created_at' => $this->created_at,
             'updated_at' => $this->updated_at,
         ];

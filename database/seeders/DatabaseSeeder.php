@@ -33,7 +33,6 @@ class DatabaseSeeder extends Seeder
 
         $manager->permissions()->syncWithoutDetaching([$manageProperties->id, $manageSettings->id, $manageBookings->id]);
 
-
         $admin = User::factory()->create([
             'name' => 'Admin',
             'email' => 'admin@admin.com',
@@ -48,7 +47,7 @@ class DatabaseSeeder extends Seeder
         $admin->roles()->syncWithoutDetaching([$manager->id]);
 
         Property::factory(50)->make()->each(function ($property) {
-            $rand = "00" . mt_rand(1, 8);
+            $rand = '00'.mt_rand(1, 8);
 
             $src = storage_path("demo/properties/cabin-{$rand}.jpg");
 
@@ -61,7 +60,6 @@ class DatabaseSeeder extends Seeder
                 $url = null;
             }
 
-
             $property->image = $url;
             $property->save();
         });
@@ -70,17 +68,15 @@ class DatabaseSeeder extends Seeder
             'minBookingLength' => 1,
             'maxBookingLength' => 30,
             'maxGuestsPerBooking' => 10,
-            'breakfastPrice' => 15.00
+            'breakfastPrice' => 15.00,
         ]);
 
         User::factory(50)->create()->each(function ($user) use ($guestRole) {
             $user->roles()->syncWithoutDetaching([$guestRole->id]);
 
-
             Guest::factory(1)->create([
                 'user_id' => $user->id,
             ]);
-
 
             Booking::factory(1)->create([
                 'guest_id' => $user->guestProfile->id,
@@ -135,11 +131,9 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->create()->each(function ($user) use ($guestRole) {
             $user->roles()->syncWithoutDetaching([$guestRole->id]);
 
-
             Guest::factory(1)->create([
                 'user_id' => $user->id,
             ]);
-
 
             Booking::factory(1)->create([
                 'guest_id' => $user->guestProfile->id,
@@ -153,11 +147,9 @@ class DatabaseSeeder extends Seeder
         User::factory(5)->create()->each(function ($user) use ($guestRole) {
             $user->roles()->syncWithoutDetaching([$guestRole->id]);
 
-
             Guest::factory(1)->create([
                 'user_id' => $user->id,
             ]);
-
 
             Booking::factory(1)->create([
                 'guest_id' => $user->guestProfile->id,

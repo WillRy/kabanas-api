@@ -11,11 +11,9 @@ class Setting extends Model
     use HasFactory;
 
     protected $fillable = [
-        "minBookingLength",
-        "maxBookingLength",
-        "maxGuestsPerBooking",
-        "breakfastPrice"
+        'minBookingLength',
+        'maxBookingLength',
+        'maxGuestsPerBooking',
+        'breakfastPrice',
     ];
-
-
 }

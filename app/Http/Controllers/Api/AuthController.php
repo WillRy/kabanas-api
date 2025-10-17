@@ -10,11 +10,13 @@ use App\Http\Requests\Api\Auth\SendPasswordResetRequest;
 use App\Http\Resources\UserResource;
 use App\Mail\SendPasswordReset;
 use App\Models\User;
+use App\Service\JwtService;
 use App\Service\ResponseJSON;
 use Illuminate\Http\JsonResponse;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
+use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Mail;
 
 class AuthController extends Controller
@@ -30,9 +32,11 @@ class AuthController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $abilities = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $abilities = $user->userPermissions();
 
         $token = $user->createToken('auth_token')->plainTextToken;
+
+        $tokens = (new JwtService)->doAuth($user->id);
 
         return ResponseJSON::getInstance()
             ->setMessage('Successfully logged in')
@@ -41,6 +45,7 @@ class AuthController extends Controller
                 'access_token' => $token,
                 'token_type' => 'Bearer',
                 'abilities' => $abilities,
+                'tokens' => $tokens,
             ])
             ->setStatusCode(201)
             ->render();
@@ -91,5 +96,25 @@ class AuthController extends Controller
         return ResponseJSON::getInstance()
             ->setMessage('Password reset successfully')
             ->render();
+    }
+
+    public function refreshToken(Request $request)
+    {
+        try {
+            $refreshToken = $request->input('refresh_token') ?? Cookie::get('refresh_token');
+
+            if (empty($refreshToken)) {
+                throw new \Exception('Invalid refresh token!', 401);
+            }
+
+            $newTokens = (new JwtService)->refreshToken($refreshToken);
+
+            return (new ResponseJSON)->setData($newTokens)->render();
+        } catch (\Exception $e) {
+
+            (new JwtService)->logoutTokens();
+
+            return (new ResponseJSON)->setError($e)->setStatusCode(401)->render();
+        }
     }
 }

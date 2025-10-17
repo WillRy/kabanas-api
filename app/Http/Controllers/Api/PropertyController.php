@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\BaseException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Property\StorePropertyRequest;
 use App\Http\Resources\Api\Property\PropertyResource;
@@ -15,7 +14,7 @@ class PropertyController extends Controller
 {
     public function store(StorePropertyRequest $request)
     {
-        $property = (new Property())->newProperty($request->validated());
+        $property = (new Property)->newProperty($request->validated());
 
         return ResponseJSON::getInstance()
             ->setMessage('Property created successfully')
@@ -27,13 +26,14 @@ class PropertyController extends Controller
     public function index(Request $request)
     {
 
-        $properties = (new Property())->list(
+        $properties = (new Property)->list(
             $request->query('sortBy', 'id'),
             $request->query('sortOrder', 'asc'),
             $request->query('discount'),
         );
 
         $data = ResponseJSON::fromPaginate($properties, PropertyResource::collection($properties));
+
         return ResponseJSON::getInstance()
             ->setData($data)
             ->render();

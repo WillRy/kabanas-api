@@ -32,7 +32,7 @@ class User extends Authenticatable
         'name',
         'email',
         'password',
-        'avatar'
+        'avatar',
     ];
 
     /**
@@ -132,22 +132,36 @@ class User extends Authenticatable
 
     public function updateProfile(array $data)
     {
-        /** @var App\Models\user $loggedUser */
+        /** @var \App\Models\User $loggedUser */
         $loggedUser = Auth::user();
-        if(!empty($data["avatar"])) {
-            $data["avatar"] = $data["avatar"]->store("avatars/{$loggedUser->id}", 'public');
+        if (! empty($data['avatar'])) {
+            $data['avatar'] = $data['avatar']->store("avatars/{$loggedUser->id}", 'public');
         }
 
-        if(!empty($data['password'])) {
+        if (! empty($data['password'])) {
             $data['password'] = Hash::make($data['password']);
         }
 
-        if(empty($data['password'])) {
+        if (empty($data['password'])) {
             unset($data['password']);
         }
 
-        $loggedUser->fill(Arr::where($data, fn($value, $key) => in_array($key, ['name', 'email', 'password', 'avatar'])));
+        $loggedUser->fill(Arr::where($data, fn ($value, $key) => in_array($key, ['name', 'email', 'password', 'avatar'])));
 
         $loggedUser->save();
+    }
+
+    public function userPermissions(): array
+    {
+        $roles = $this->roles()->with('permissions')->get();
+        $permissions = [];
+        /** @var \App\Models\Role $role */
+        foreach ($roles as $role) {
+            /**  @var \App\Models\Permission $permission */
+            foreach ($role->permissions as $permission) {
+                $permissions[] = $permission->name;
+            }
+        }
+        return array_values(array_unique($permissions));
     }
 }

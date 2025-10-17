@@ -2,7 +2,6 @@
 
 namespace App\Http\Controllers\Api;
 
-use App\Exceptions\BaseException;
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Setting\SaveSettingRequest;
 use App\Models\Setting;
@@ -26,8 +25,8 @@ class SettingController extends Controller
         Gate::authorize('update', Setting::class);
 
         $setting = Setting::first();
-        if (!$setting) {
-            $setting = new Setting();
+        if (! $setting) {
+            $setting = new Setting;
         }
         $setting->fill($request->validated());
         $setting->save();

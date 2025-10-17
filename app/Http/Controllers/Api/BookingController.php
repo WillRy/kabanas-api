@@ -11,16 +11,16 @@ use Illuminate\Support\Facades\Gate;
 
 class BookingController extends Controller
 {
-
     public function index(Request $request)
     {
-        $bookings = (new Booking())->list(
+        $bookings = (new Booking)->list(
             $request->query('sortBy', 'id'),
             $request->query('sortOrder', 'asc'),
             $request->query('status'),
         );
 
         $data = ResponseJSON::fromPaginate($bookings, BookingResource::collection($bookings));
+
         return ResponseJSON::getInstance()
             ->setData($data)
             ->render();
@@ -28,7 +28,7 @@ class BookingController extends Controller
 
     public function view(int $bookingId)
     {
-        $booking = (new Booking())->details($bookingId);
+        $booking = (new Booking)->details($bookingId);
 
         Gate::authorize('view', $booking);
 
@@ -67,7 +67,7 @@ class BookingController extends Controller
     {
         $numDays = (int) $request->query('last', 7);
 
-        $stats = (new Booking())->stats($numDays);
+        $stats = (new Booking)->stats($numDays);
 
         return ResponseJSON::getInstance()
             ->setData($stats)
@@ -85,7 +85,7 @@ class BookingController extends Controller
 
     public function todayActivity()
     {
-        $bookings = (new Booking())->todayActivities();
+        $bookings = (new Booking)->todayActivities();
 
         return ResponseJSON::getInstance()
             ->setData(BookingResource::collection($bookings))

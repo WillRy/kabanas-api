@@ -4,7 +4,6 @@ namespace App\Policies;
 
 use App\Models\Booking;
 use App\Models\User;
-use Illuminate\Auth\Access\Response;
 
 class BookingPolicy
 {
@@ -13,7 +12,8 @@ class BookingPolicy
      */
     public function viewAny(User $user): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
@@ -22,9 +22,16 @@ class BookingPolicy
      */
     public function view(User $user, Booking $booking): bool
     {
-       $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
         $canSeeAll = in_array('manage-bookings', $permissions, true);
-        $isOwner = $user->guest && $user->guest->id === $booking->guest->guest_id;
+
+        /** @var \App\Models\Guest $guestProfile */
+        $guestProfile = $user->guestProfile;
+
+         /** @var \App\Models\Guest $bookingGuest */
+        $bookingGuest = $booking->guest;
+
+        $isOwner = $guestProfile->id === $bookingGuest->id;
 
         return $canSeeAll || $isOwner;
     }
@@ -34,7 +41,8 @@ class BookingPolicy
      */
     public function create(User $user): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
@@ -43,25 +51,29 @@ class BookingPolicy
      */
     public function update(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
     public function checkIn(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
     public function stats(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
     public function checkOut(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
@@ -70,7 +82,8 @@ class BookingPolicy
      */
     public function delete(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
@@ -79,7 +92,8 @@ class BookingPolicy
      */
     public function restore(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 
@@ -88,7 +102,8 @@ class BookingPolicy
      */
     public function forceDelete(User $user, Booking $booking): bool
     {
-        $permissions = $user->roles->flatMap->permissions->pluck('name')->toArray();
+        $permissions = $user->userPermissions();
+
         return in_array('manage-bookings', $permissions, true);
     }
 }
