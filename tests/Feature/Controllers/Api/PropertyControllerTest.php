@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PropertyControllerTest extends TestCase
@@ -135,6 +136,7 @@ class PropertyControllerTest extends TestCase
         ]);
 
 
+        Storage::fake('public');
         $response = $this->postJson('/api/property', [
             'name' => $this->faker->text(30),
             'maxCapacity' => $this->faker->numberBetween(1, 10),
@@ -156,6 +158,7 @@ class PropertyControllerTest extends TestCase
 
         $this->actingAsAdmin();
 
+        Storage::fake('public');
         $response = $this->postJson('/api/property', [
             'name' => $this->faker->text(30),
             'maxCapacity' => $this->faker->numberBetween(1, 10),
@@ -257,7 +260,7 @@ class PropertyControllerTest extends TestCase
             'image',
         ]);
 
-
+        Storage::fake('public');
         $response = $this->postJson("/api/property/{$property->id}", [
             'name' => $this->faker->text(30),
             'maxCapacity' => $this->faker->numberBetween(1, 10),

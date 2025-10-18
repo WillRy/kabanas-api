@@ -7,6 +7,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class ProfileControllerTest extends TestCase
@@ -40,6 +41,7 @@ class ProfileControllerTest extends TestCase
 
         $this->actingAs($user);
 
+        Storage::fake('public');
         $response = $this->postJson('/api/profile', [
             'name' => 'Updated Name',
             'email' => "admin2@admin.com",

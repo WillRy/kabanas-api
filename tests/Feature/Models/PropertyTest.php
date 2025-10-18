@@ -7,6 +7,7 @@ use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
+use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
 
 class PropertyTest extends TestCase
@@ -19,6 +20,7 @@ class PropertyTest extends TestCase
 
         $this->actingAsAdmin();
 
+        Storage::fake('public');
         $createdData = [
             'name' => 'Test Property',
             'maxCapacity' => 4,
@@ -45,6 +47,7 @@ class PropertyTest extends TestCase
 
         $this->actingAs($user);
 
+        Storage::fake('public');
         $createdData = [
             'name' => 'Test Property',
             'maxCapacity' => 4,
@@ -131,6 +134,7 @@ class PropertyTest extends TestCase
 
         $this->actingAsAdmin();
 
+        Storage::fake('public');
         $updateProperty = [
             'id' => 1,
             'name' => 'Test Property',
@@ -159,6 +163,7 @@ class PropertyTest extends TestCase
 
         $this->actingAs($user);
 
+        Storage::fake('public');
         $updateProperty = [
             'id' => 1,
             'name' => 'Test Property',
@@ -190,7 +195,7 @@ class PropertyTest extends TestCase
         ]);
     }
 
-      public function testIfUnauthorizedUserCannotDeleteProperty()
+    public function testIfUnauthorizedUserCannotDeleteProperty()
     {
         $this->seed();
 
