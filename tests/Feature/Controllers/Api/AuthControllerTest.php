@@ -3,9 +3,10 @@
 namespace Tests\Feature\Controllers\Api;
 
 use App\Models\Otp;
+use App\Models\User;
 use App\Service\JwtService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class AuthControllerTest extends TestCase
@@ -70,7 +71,7 @@ class AuthControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = \App\Models\User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user, 'sanctum');
 
@@ -99,7 +100,7 @@ class AuthControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = \App\Models\User::where('email', '=', 'admin@admin.com')->first();
+        $user = $user = User::getMasterAdmin();
 
         $token = $user->createToken('secrettoken')->plainTextToken;
 
@@ -221,9 +222,11 @@ class AuthControllerTest extends TestCase
     {
         $this->seed();
 
+        Mail::fake();
         $response = $this->postJson('/api/auth/start-password-reset', [
             'email' => 'admin@admin.com',
         ]);
+        Mail::assertQueued(\App\Mail\SendPasswordReset::class, 1);
 
         $otpByUser = Otp::where('type', Otp::TYPE_PASSWORD_RESET)->whereHas('user', function ($query) {
             $query->where('email', '=', 'admin@admin.com');

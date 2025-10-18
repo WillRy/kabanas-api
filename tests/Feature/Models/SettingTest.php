@@ -64,7 +64,7 @@ class SettingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -84,7 +84,7 @@ class SettingTest extends TestCase
 
         $this->seed();
 
-        $user = User::where('email', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 

@@ -86,7 +86,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "!=", 'admin@admin.com')->first();
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -110,7 +110,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -159,7 +159,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "!=", 'admin@admin.com')->first();
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -178,7 +178,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -196,7 +196,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -216,7 +216,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -233,7 +233,7 @@ class BookingTest extends TestCase
 
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -260,7 +260,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -280,7 +280,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();;
 
         $this->actingAs($user);
 
@@ -293,11 +293,11 @@ class BookingTest extends TestCase
         ]);
     }
 
-        public function testIfUnauthorizedUserCannotDeleteBooking(): void
+    public function testIfUnauthorizedUserCannotDeleteBooking(): void
     {
         $this->seed();
 
-        $user = User::where('email', "!=", 'admin@admin.com')->first();
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -305,6 +305,5 @@ class BookingTest extends TestCase
 
         $this->expectException(\Illuminate\Auth\Access\AuthorizationException::class);
         $booking->deleteBooking();
-
     }
 }

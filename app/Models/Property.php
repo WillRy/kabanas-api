@@ -9,7 +9,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 
-#[UsePolicy(PropertyPolicy::class)]
 class Property extends Model
 {
     /** @use HasFactory<\Database\Factories\PropertyFactory> */

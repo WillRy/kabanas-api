@@ -24,7 +24,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "!=", 'admin@admin.com')->first();
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -46,7 +46,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -92,29 +92,29 @@ class PropertyControllerTest extends TestCase
         $response = $this->getJson('/api/property?sortBy=id&sortOrder=desc');
         $response->assertStatus(200);
         $responseData = $response->json('data.data');
-        $this->assertEmpty($responseData[0]['id'] < $responseData[1]['id']);
+        $this->assertFalse($responseData[0]['id'] < $responseData[1]['id']);
 
         $response = $this->getJson('/api/property?sortBy=name&sortOrder=desc');
         $response->assertStatus(200);
         $responseData = $response->json('data.data');
-        $this->assertEmpty($responseData[0]['name'] < $responseData[1]['name']);
+        $this->assertFalse($responseData[0]['name'] < $responseData[1]['name']);
 
         $response = $this->getJson('/api/property?sortBy=regularPrice&sortOrder=desc');
         $response->assertStatus(200);
         $responseData = $response->json('data.data');
-        $this->assertEmpty($responseData[0]['regularPrice'] < $responseData[1]['regularPrice']);
+        $this->assertFalse($responseData[0]['regularPrice'] < $responseData[1]['regularPrice']);
 
         $response = $this->getJson('/api/property?sortBy=discount&sortOrder=desc');
         $response->assertStatus(200);
         $responseData = $response->json('data.data');
-        $this->assertEmpty($responseData[0]['discount'] < $responseData[1]['discount']);
+        $this->assertFalse($responseData[0]['discount'] < $responseData[1]['discount']);
     }
 
     public function testIfValidatonWorks(): void
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -128,6 +128,7 @@ class PropertyControllerTest extends TestCase
         ]);
 
 
+        $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'name',
             'maxCapacity',
@@ -157,7 +158,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -201,7 +202,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -219,7 +220,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "!=", 'admin@admin.com')->first();
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -241,7 +242,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -256,7 +257,7 @@ class PropertyControllerTest extends TestCase
             'image' => "xpto",
         ]);
 
-
+        $response->assertStatus(422);
         $response->assertJsonValidationErrors([
             'name',
             'maxCapacity',
@@ -286,7 +287,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', "=", 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 

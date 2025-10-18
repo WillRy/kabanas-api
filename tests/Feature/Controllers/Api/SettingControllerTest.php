@@ -17,7 +17,7 @@ class SettingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where("email", "=", "admin@admin.com")->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -51,7 +51,7 @@ class SettingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where("email", "=", "admin@admin.com")->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -78,7 +78,7 @@ class SettingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where("email", "=", "admin@admin.com")->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -121,7 +121,7 @@ class SettingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where("email", "!=", "admin@admin.com")->first();
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 

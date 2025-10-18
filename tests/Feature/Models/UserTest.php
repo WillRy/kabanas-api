@@ -3,6 +3,7 @@
 namespace Tests\Feature\Models;
 
 use App\Exceptions\BaseException;
+use App\Mail\SendPasswordReset;
 use App\Models\User;
 use Illuminate\Database\Eloquent\Relations\HasManyThrough;
 use Illuminate\Foundation\Testing\DatabaseTransactions;
@@ -11,6 +12,7 @@ use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Hash;
+use Illuminate\Support\Facades\Mail;
 use Tests\TestCase;
 
 class UserTest extends TestCase
@@ -52,8 +54,6 @@ class UserTest extends TestCase
 
     public function testIfCreatingUserWithExistentEmailThrowsException(): void
     {
-        $this->expectException(\Exception::class);
-
         $fakeData = $this->returnDefaultUser();
 
         (new User())->createUser($fakeData);

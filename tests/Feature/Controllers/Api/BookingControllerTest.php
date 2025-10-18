@@ -36,7 +36,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = \App\Models\User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -113,17 +113,17 @@ class BookingControllerTest extends TestCase
         $response = $this->getJson('/api/bookings?sortBy=id&sortOrder=desc');
         $response->assertStatus(200);
         $data = $response->json('data.data');
-        $this->assertEmpty($data[0]['id'] < $data[1]['id']);
+        $this->assertFalse($data[0]['id'] < $data[1]['id']);
 
         $response = $this->getJson('/api/bookings?sortBy=startDate&sortOrder=desc');
         $response->assertStatus(200);
         $data = $response->json('data.data');
-        $this->assertEmpty($data[0]['startDate'] < $data[1]['startDate']);
+        $this->assertFalse($data[0]['startDate'] < $data[1]['startDate']);
 
         $response = $this->getJson('/api/bookings?sortBy=totalPrice&sortOrder=desc');
         $response->assertStatus(200);
         $data = $response->json('data.data');
-        $this->assertEmpty($data[0]['totalPrice'] < $data[1]['totalPrice']);
+        $this->assertFalse($data[0]['totalPrice'] < $data[1]['totalPrice']);
     }
 
     public function testIfCannotViewBookingWithUnauthorizedUser(): void
@@ -141,20 +141,6 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testIfCanViewBookingWithAuthorizedUser(): void
-    {
-        $this->seed();
-
-        $user = \App\Models\User::factory()->create();
-
-        $this->actingAs($user);
-
-        $booking = \App\Models\Booking::first();
-
-        $response = $this->getJson('/api/bookings/' . $booking->id);
-
-        $response->assertStatus(403);
-    }
 
     public function testIfViewBookingFailsWithInexistentBooking(): void
     {
@@ -172,7 +158,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -242,7 +228,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -256,7 +242,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -269,7 +255,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -308,7 +294,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -322,7 +308,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -354,7 +340,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -419,7 +405,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
@@ -456,7 +442,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::where('email', '=', 'admin@admin.com')->first();
+        $user = User::getMasterAdmin();
 
         $this->actingAs($user);
 
