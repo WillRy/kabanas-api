@@ -17,9 +17,7 @@ class SettingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->getJson('/api/setting');
 
@@ -51,9 +49,7 @@ class SettingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->putJson('/api/setting', [
             'minBookingLength' => 2,
@@ -72,15 +68,19 @@ class SettingControllerTest extends TestCase
                 'breakfastPrice',
             ],
         ]);
+        $this->assertDatabaseHas('settings', [
+            'minBookingLength' => 2,
+            'maxBookingLength' => 20,
+            'maxGuestsPerBooking' => 4,
+            'breakfastPrice' => 15.50,
+        ]);
     }
 
     public function testIfSettingsCanBeUpdatedWithoutDefaultSettingsExists(): void
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         Setting::query()->delete();
 
@@ -100,6 +100,12 @@ class SettingControllerTest extends TestCase
                 'maxGuestsPerBooking',
                 'breakfastPrice',
             ],
+        ]);
+        $this->assertDatabaseHas('settings', [
+            'minBookingLength' => 2,
+            'maxBookingLength' => 20,
+            'maxGuestsPerBooking' => 4,
+            'breakfastPrice' => 15.50,
         ]);
     }
 

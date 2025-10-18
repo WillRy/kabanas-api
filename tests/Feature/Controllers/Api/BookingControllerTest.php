@@ -36,9 +36,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->getJson('/api/bookings');
         $response->assertStatus(200);
@@ -158,9 +156,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::first();
 
@@ -228,9 +224,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::where('status', '!=', 'unconfirmed')->first();
 
@@ -242,9 +236,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
 
         $response = $this->putJson('/api/bookings/9999999999/check-in');
@@ -255,9 +247,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::where('status', '=', 'unconfirmed')->first();
 
@@ -294,9 +284,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::where('status', '!=', 'checked-in')->first();
 
@@ -308,9 +296,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::where('status', '=', 'checked-in')->first();
 
@@ -340,9 +326,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->getJson('/api/bookings/stats?last=7');
 
@@ -405,9 +389,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::first();
         $response = $this->deleteJson('/api/bookings/' . $booking->id);
@@ -442,9 +424,7 @@ class BookingControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->getJson('/api/bookings/today-activity?last=7');
 

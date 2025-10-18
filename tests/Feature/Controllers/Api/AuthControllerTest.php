@@ -71,9 +71,7 @@ class AuthControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user, 'sanctum');
+        $this->actingAsAdmin('sanctum');
 
         $response = $this->getJson('/api/user');
 
@@ -100,7 +98,7 @@ class AuthControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = $user = User::getMasterAdmin();
+        $user = $this->getAdmin();
 
         $token = $user->createToken('secrettoken')->plainTextToken;
 

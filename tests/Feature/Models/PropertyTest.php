@@ -17,9 +17,7 @@ class PropertyTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $createdData = [
             'name' => 'Test Property',
@@ -65,9 +63,7 @@ class PropertyTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
 
         $properties = (new Property())->list();
@@ -93,9 +89,7 @@ class PropertyTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
 
         $properties = (new Property())->list('id', 'desc', null);
@@ -123,7 +117,7 @@ class PropertyTest extends TestCase
     {
         $this->seed();
 
-        $user = User::find(3);
+        $user = User::factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -135,9 +129,7 @@ class PropertyTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $updateProperty = [
             'id' => 1,
@@ -187,9 +179,7 @@ class PropertyTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $property = Property::find(1);
         $property->deleteProperty();

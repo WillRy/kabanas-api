@@ -46,9 +46,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->getJson('/api/property');
 
@@ -114,9 +112,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->postJson('/api/property', [
             'name' => $this->faker->text(400),
@@ -158,9 +154,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $response = $this->postJson('/api/property', [
             'name' => $this->faker->text(30),
@@ -202,9 +196,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $property = Property::find(1);
 
@@ -242,9 +234,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $property = Property::find(1);
 
@@ -287,9 +277,7 @@ class PropertyControllerTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $property = Property::find(1);
 

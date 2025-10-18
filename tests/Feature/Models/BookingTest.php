@@ -110,9 +110,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = Booking::factory(1)->create([
             'hasBreakfast' => false,
@@ -178,9 +176,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = Booking::factory(1)->create([
             'hasBreakfast' => false,
@@ -196,9 +192,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = Booking::factory(1)->create([
             'status' => 'checked-in',
@@ -216,9 +210,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = Booking::factory(1)->create([
             'status' => 'unconfirmed',
@@ -233,9 +225,7 @@ class BookingTest extends TestCase
 
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $stats = (new Booking())->stats(7);
 
@@ -260,9 +250,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $activities = (new Booking())->todayActivities();
 
@@ -280,9 +268,7 @@ class BookingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();;
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $booking = Booking::factory(1)->create()->first();
 

@@ -64,9 +64,7 @@ class SettingTest extends TestCase
     {
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $settingsModel = new \App\Models\Setting();
 
@@ -84,9 +82,7 @@ class SettingTest extends TestCase
 
         $this->seed();
 
-        $user = User::getMasterAdmin();
-
-        $this->actingAs($user);
+        $this->actingAsAdmin();
 
         $settingsModel = new \App\Models\Setting();
 
