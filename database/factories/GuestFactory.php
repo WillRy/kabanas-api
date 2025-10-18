@@ -23,6 +23,7 @@ class GuestFactory extends Factory
             'nationalID' => $this->faker->unique()->numerify('###########'),
             'nationality' => $this->faker->country(),
             'countryFlag' => $countryFlag,
+            'user_id' => \App\Models\User::factory(),
         ];
     }
 }

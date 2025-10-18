@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use App\Exceptions\BaseException;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,9 +32,9 @@ class Booking extends Model
     protected $casts = [
         'startDate' => 'datetime',
         'endDate' => 'datetime',
-        'propertyPrice' => 'float',
-        'extrasPrice' => 'float',
-        'totalPrice' => 'float',
+        'propertyPrice' => 'decimal:2',
+        'extrasPrice' => 'decimal:2',
+        'totalPrice' => 'decimal:2',
         'hasBreakfast' => 'boolean',
         'isPaid' => 'boolean',
     ];
@@ -84,7 +85,7 @@ class Booking extends Model
         Gate::authorize('checkIn', $this);
 
         if ($this->status !== 'unconfirmed') {
-            throw new \Exception('Only unconfirmed bookings can be checked in.');
+            throw new BaseException('Only unconfirmed bookings can be checked in.', 422);
         }
 
         $settings = Setting::first();
@@ -92,9 +93,11 @@ class Booking extends Model
         $this->status = 'checked-in';
         $this->isPaid = true;
 
+
+
         if ($this->hasBreakfast) {
-            $this->totalPrice += $settings->breakfastPrice * $this->numNights * $this->numGuests;
-            $this->extrasPrice = $settings->breakfastPrice * $this->numNights * $this->numGuests;
+            $this->extrasPrice = round($settings->breakfastPrice * $this->numNights * $this->numGuests, 2);
+            $this->totalPrice = round($this->propertyPrice * $this->numNights + $this->extrasPrice, 2);
         }
 
         $this->save();
@@ -105,23 +108,16 @@ class Booking extends Model
         Gate::authorize('checkOut', $this);
 
         if ($this->status !== 'checked-in') {
-            throw new \Exception('Only checked-in bookings can be checked out.');
+            throw new BaseException('Only checked-in bookings can be checked out.', 422);
         }
 
         $this->status = 'checked-out';
         $this->save();
     }
 
-    public function bookingsAfterDate($date)
-    {
-        return self::query()
-            ->whereRaw('DATE(created_at) >= ?', [$date])
-            ->whereRaw('DATE(created_at) <= ?', [now()->format('Y-m-d')])
-            ->get();
-    }
-
     public function stats(int $numDays)
     {
+        Gate::authorize('stats', Booking::class);
 
         $afterDate = now()->subDays($numDays)->format('Y-m-d');
 
@@ -158,6 +154,8 @@ class Booking extends Model
 
     public function todayActivities()
     {
+        Gate::authorize('stats', Booking::class);
+
         return self::query()
             ->with(['guest', 'guest.user', 'property'])
             ->where(function ($query) {
@@ -171,5 +169,12 @@ class Booking extends Model
             })
             ->orderBy('created_at', 'asc')
             ->get();
+    }
+
+    public function deleteBooking()
+    {
+        Gate::authorize('delete', $this);
+
+        $this->delete();
     }
 }

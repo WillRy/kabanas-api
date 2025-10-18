@@ -16,6 +16,12 @@
         <include>
             <directory>app</directory>
         </include>
+        <exclude>
+            <directory>app/Providers</directory>
+            <file>app/Service/ResponseJSON.php</file>
+            <file>app/Service/JwtService.php</file>
+            <file>app/AuthGuard/JwtGuard.php</file>
+        </exclude>
     </source>
     <php>
         <env name="APP_ENV" value="testing"/>

@@ -78,6 +78,25 @@ class User extends Authenticatable
         return $this->hasOne(Guest::class);
     }
 
+    public function createUser(array $data)
+    {
+        $userAlreadyExists = User::where('email', $data['email'])->first();
+
+        if ($userAlreadyExists) {
+            throw new BaseException('User already exists', 422);
+        }
+
+        $data['password'] = Hash::make($data['password']);
+
+        $user = User::create(Arr::only($data, ['name', 'email', 'password', 'avatar']));
+
+        $user->guestProfile()->create($data);
+
+
+        return $user;
+    }
+
+
     public function resetPasswordWithOtp(string $email, string $otp, string $newPassword): void
     {
         $user = User::where('email', $email)->first();
@@ -87,12 +106,7 @@ class User extends Authenticatable
         }
 
         /** @var \App\Models\Otp|null $otp */
-        $otp = $user->otps()
-            ->where('code', $otp)
-            ->where('type', Otp::TYPE_PASSWORD_RESET)
-            ->whereNull('used_at')
-            ->where('expires_at', '>', now())
-            ->first();
+        $otp = (new Otp())->validateOtp($otp, Otp::TYPE_PASSWORD_RESET);
 
         if (! $otp) {
             throw new BaseException('Invalid or expired OTP', 403);
@@ -117,11 +131,7 @@ class User extends Authenticatable
             throw new BaseException('User not found', 404);
         }
 
-        $otp = $user->otps()->create([
-            'code' => rand(100000, 999999),
-            'expires_at' => now()->addMinutes(Otp::EXPIRES_IN_MINUTES),
-            'type' => Otp::TYPE_PASSWORD_RESET,
-        ]);
+        $otp = (new Otp())->createOtpByUser($user->id, Otp::TYPE_PASSWORD_RESET);
 
         $data = new stdClass;
         $data->user = $user;
@@ -149,6 +159,8 @@ class User extends Authenticatable
         $loggedUser->fill(Arr::where($data, fn ($value, $key) => in_array($key, ['name', 'email', 'password', 'avatar'])));
 
         $loggedUser->save();
+
+        return $loggedUser;
     }
 
     public function userPermissions(): array

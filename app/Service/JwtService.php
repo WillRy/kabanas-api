@@ -266,7 +266,7 @@ class JwtService
      */
     public function logoutTokens(): void
     {
-        Auth::guard()->logout();
+        Auth::guard("api")->logout();
 
         $token = Request::bearerToken() ?? Cookie::get('token');
 
@@ -283,11 +283,11 @@ class JwtService
     public function removeExpiredTokens(): void
     {
         DB::table('refresh_token')
-            ->whereRaw('(token_expiration < now())')
+            ->whereRaw('(token_expiration < ?)', [now()])
             ->delete();
 
         DB::table('auth_token')
-            ->whereRaw('(token_expiration < now())')
+            ->whereRaw('(token_expiration < ?)', [now()])
             ->delete();
     }
 
@@ -306,7 +306,7 @@ class JwtService
     {
         return DB::table('refresh_token')
             ->where('refresh_id', '=', $parentRefreshId)
-            ->whereRaw('(token_expiration > now())')
+            ->whereRaw('(token_expiration > ?)', [now()])
             ->orderBy('id', 'desc')
             ->first();
     }
@@ -342,13 +342,13 @@ class JwtService
                 $query->select(DB::raw(1))
                     ->from('auth_token')
                     ->whereRaw('auth_token.token_session_id = token_sessions.id')
-                    ->whereRaw('auth_token.token_expiration >= now()');
+                    ->whereRaw('auth_token.token_expiration >= ?', [now()]);
             })
             ->whereNotExists(function ($query) {
                 $query->select(DB::raw(1))
                     ->from('refresh_token')
                     ->whereRaw('refresh_token.token_session_id = token_sessions.id')
-                    ->whereRaw('refresh_token.token_expiration >= now()');
+                    ->whereRaw('refresh_token.token_expiration >= ?', [now()]);
             })
             ->delete();
     }

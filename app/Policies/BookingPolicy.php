@@ -31,30 +31,11 @@ class BookingPolicy
          /** @var \App\Models\Guest $bookingGuest */
         $bookingGuest = $booking->guest;
 
-        $isOwner = $guestProfile->id === $bookingGuest->id;
+        $isOwner = $guestProfile && $guestProfile->id === $bookingGuest->id;
 
         return $canSeeAll || $isOwner;
     }
 
-    /**
-     * Determine whether the user can create models.
-     */
-    public function create(User $user): bool
-    {
-        $permissions = $user->userPermissions();
-
-        return in_array('manage-bookings', $permissions, true);
-    }
-
-    /**
-     * Determine whether the user can update the model.
-     */
-    public function update(User $user, Booking $booking): bool
-    {
-        $permissions = $user->userPermissions();
-
-        return in_array('manage-bookings', $permissions, true);
-    }
 
     public function checkIn(User $user, Booking $booking): bool
     {
@@ -63,14 +44,14 @@ class BookingPolicy
         return in_array('manage-bookings', $permissions, true);
     }
 
-    public function stats(User $user, Booking $booking): bool
+    public function stats(User $user): bool
     {
         $permissions = $user->userPermissions();
 
         return in_array('manage-bookings', $permissions, true);
     }
 
-    public function checkOut(User $user, Booking $booking): bool
+    public function checkOut(User $user): bool
     {
         $permissions = $user->userPermissions();
 
@@ -80,30 +61,11 @@ class BookingPolicy
     /**
      * Determine whether the user can delete the model.
      */
-    public function delete(User $user, Booking $booking): bool
+    public function delete(User $user): bool
     {
         $permissions = $user->userPermissions();
 
         return in_array('manage-bookings', $permissions, true);
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Booking $booking): bool
-    {
-        $permissions = $user->userPermissions();
-
-        return in_array('manage-bookings', $permissions, true);
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Booking $booking): bool
-    {
-        $permissions = $user->userPermissions();
-
-        return in_array('manage-bookings', $permissions, true);
-    }
 }

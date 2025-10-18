@@ -12,15 +12,9 @@ class PropertyPolicy
      */
     public function viewAny(User $user): bool
     {
-        return true;
-    }
+        $permissions = $user->userPermissions();
 
-    /**
-     * Determine whether the user can view the model.
-     */
-    public function view(User $user, Property $property): bool
-    {
-        return true;
+        return in_array('manage-properties', $permissions, true);
     }
 
     /**
@@ -53,23 +47,5 @@ class PropertyPolicy
         return in_array('manage-properties', $permissions, true);
     }
 
-    /**
-     * Determine whether the user can restore the model.
-     */
-    public function restore(User $user, Property $property): bool
-    {
-        $permissions = $user->userPermissions();
 
-        return in_array('manage-properties', $permissions, true);
-    }
-
-    /**
-     * Determine whether the user can permanently delete the model.
-     */
-    public function forceDelete(User $user, Property $property): bool
-    {
-        $permissions = $user->userPermissions();
-
-        return in_array('manage-properties', $permissions, true);
-    }
 }

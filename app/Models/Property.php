@@ -27,6 +27,7 @@ class Property extends Model
     protected $casts = [
         'regularPrice' => 'float',
         'discount' => 'float',
+        'maxCapacity' => 'integer',
     ];
 
     public function newProperty(array $attributes = [])
@@ -79,5 +80,12 @@ class Property extends Model
         $this->save();
 
         return $this;
+    }
+
+    public function deleteProperty()
+    {
+        Gate::authorize('delete', $this);
+
+        $this->delete();
     }
 }

@@ -4,6 +4,7 @@ namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
 use App\Http\Requests\Api\Setting\SaveSettingRequest;
+use App\Http\Resources\Api\Setting\SettingResource;
 use App\Models\Setting;
 use App\Service\ResponseJSON;
 use Illuminate\Http\Request;
@@ -13,10 +14,10 @@ class SettingController extends Controller
 {
     public function index(Request $request)
     {
-        Gate::authorize('viewAny', Setting::class);
 
+        $setting = (new Setting)->getSettings();
         return ResponseJSON::getInstance()
-            ->setData(Setting::first())
+            ->setData(new SettingResource($setting))
             ->render();
     }
 

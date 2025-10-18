@@ -52,9 +52,7 @@ class PropertyController extends Controller
 
     public function destroy(Property $property)
     {
-        Gate::authorize('delete', $property);
-
-        $property->delete();
+        $property->deleteProperty();
 
         return response()->noContent();
     }

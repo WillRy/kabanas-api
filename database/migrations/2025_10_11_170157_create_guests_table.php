@@ -13,9 +13,9 @@ return new class extends Migration
     {
         Schema::create('guests', function (Blueprint $table) {
             $table->id();
-            $table->string('nationalID')->unique();
-            $table->string('nationality');
-            $table->string('countryFlag');
+            $table->string('nationalID')->nullable()->unique();
+            $table->string('nationality')->nullable();
+            $table->string('countryFlag')->nullable();
             $table->foreignId('user_id')->constrained()->onDelete('cascade');
             $table->timestamps();
         });

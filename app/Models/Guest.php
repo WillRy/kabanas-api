@@ -16,6 +16,7 @@ class Guest extends Model
         'nationalID',
         'nationality',
         'countryFlag',
+        'user_id',
     ];
 
     public function user(): BelongsTo

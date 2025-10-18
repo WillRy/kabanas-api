@@ -30,4 +30,24 @@ class Otp extends Model
     {
         return $this->belongsTo(User::class);
     }
+
+    public function createOtpByUser(int $userId, string $type, ?int $expiresIn = Otp::EXPIRES_IN_MINUTES): Otp
+    {
+        return self::create([
+            'user_id' => $userId,
+            'code' => rand(100000, 999999),
+            'expires_at' => now()->addMinutes($expiresIn),
+            'type' => $type,
+        ]);
+    }
+
+    public function validateOtp(string $code, string $type): Otp|null
+    {
+        return Otp::query()
+            ->where('code', $code)
+            ->where('type', $type)
+            ->whereNull('used_at')
+            ->where('expires_at', '>', now())
+            ->first();
+    }
 }

@@ -25,9 +25,8 @@ class DatabaseSeeder extends Seeder
         $manager = Role::firstOrCreate(['name' => 'manager']);
 
         $manageProperties = Permission::firstOrCreate(['name' => 'manage-properties']);
-        $manageSettings = Permission::firstOrCreate(['name' => 'manage-settings']);
-        $manageBookings = Permission::firstOrCreate(['name' => 'manage-bookings']);
         $manageSettings = Permission::firstOrCreate(['name' => 'settings']);
+        $manageBookings = Permission::firstOrCreate(['name' => 'manage-bookings']);
 
         $guestRole = Role::firstOrCreate(['name' => 'guest']);
 

@@ -30,6 +30,13 @@ class BookingController extends Controller
     {
         $booking = (new Booking)->details($bookingId);
 
+        if(!$booking) {
+            return ResponseJSON::getInstance()
+                ->setMessage('Booking not found')
+                ->setStatusCode(404)
+                ->render();
+        }
+
         Gate::authorize('view', $booking);
 
         return ResponseJSON::getInstance()
@@ -76,9 +83,7 @@ class BookingController extends Controller
 
     public function destroy(Booking $booking)
     {
-        Gate::authorize('delete', $booking);
-
-        $booking->delete();
+        $booking->deleteBooking();
 
         return response()->noContent();
     }
