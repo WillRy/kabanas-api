@@ -3,6 +3,7 @@
 namespace App\Models;
 
 use App\Exceptions\BaseException;
+use App\Http\Resources\Api\Booking\BookingResource;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -127,7 +128,7 @@ class Booking extends Model
         $occupancyRate = 0.0;
 
         $bookings = self::query()
-            ->select('id', 'startDate', 'endDate', 'numNights', 'totalPrice', 'extrasPrice', 'status', 'created_at')
+            ->with(['guest', 'guest.user'])
             ->whereRaw('DATE(created_at) >= ?', [$afterDate])
             ->whereRaw('DATE(created_at) <= ?', [now()->format('Y-m-d')])
             ->get();
@@ -147,8 +148,8 @@ class Booking extends Model
             'sales' => $sales,
             'occupancyRate' => $occupancyRate,
             'confirmedStaysCount' => $confirmedStays->count(),
-            'confirmedStays' => $confirmedStays,
-            'bookings' => $bookings,
+            'confirmedStays' =>  BookingResource::collection($confirmedStays),
+            'bookings' => BookingResource::collection($bookings),
         ];
     }
 

@@ -16,7 +16,7 @@ class GuestFactory extends Factory
      */
     public function definition(): array
     {
-        $country = $this->faker->countryCode();
+        $country = mb_strtolower($this->faker->countryCode());
         $countryFlag = "https://flagcdn.com/{$country}.svg";
 
         return [
