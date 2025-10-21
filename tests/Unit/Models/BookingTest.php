@@ -35,9 +35,9 @@ class BookingTest extends TestCase
         $expected = [
             'startDate' => 'datetime',
             'endDate' => 'datetime',
-            'propertyPrice' => 'decimal:2',
-            'extrasPrice' => 'decimal:2',
-            'totalPrice' => 'decimal:2',
+            'propertyPrice' => 'float',
+            'extrasPrice' => 'float',
+            'totalPrice' => 'float',
             'hasBreakfast' => 'boolean',
             'isPaid' => 'boolean',
             'id' => 'int',

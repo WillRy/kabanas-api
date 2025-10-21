@@ -8,6 +8,7 @@ use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class PropertyControllerTest extends TestCase
@@ -52,24 +53,21 @@ class PropertyControllerTest extends TestCase
         $response = $this->getJson('/api/property');
 
         $response->assertStatus(200);
-
-        $response->assertJsonStructure([
-            'data' => [
-                'data' => [
-                    '*' => [
-                        'id',
-                        'name',
-                        'maxCapacity',
-                        'regularPrice',
-                        'discount',
-                        'description',
-                        'image',
-                        'created_at',
-                        'updated_at',
-                    ],
-                ],
-            ],
-        ]);
+        $response->assertJson(function(AssertableJson $json) {
+            $json
+                ->has('data')
+                ->has('data.data')
+                ->whereType('data.data.0.id', 'integer')
+                 ->whereType('data.data.0.name', 'string')
+                 ->whereType('data.data.0.maxCapacity', 'integer')
+                 ->whereType('data.data.0.regularPrice', 'integer|double')
+                 ->whereType('data.data.0.discount', 'integer|double|null')
+                 ->whereType('data.data.0.description', 'string')
+                 ->whereType('data.data.0.image', "string|null")
+                 ->whereType('data.data.0.created_at', 'string')
+                 ->whereType('data.data.0.updated_at', 'string')
+                ->etc();
+        });
 
         $response = $this->getJson('/api/property?discount=with-discount');
 
@@ -170,20 +168,19 @@ class PropertyControllerTest extends TestCase
 
         $response->assertStatus(201);
 
-        $response->assertJsonStructure([
-            'message',
-            'data' => [
-                'id',
-                'name',
-                'maxCapacity',
-                'regularPrice',
-                'discount',
-                'description',
-                'image',
-                'created_at',
-                'updated_at',
-            ],
-        ]);
+
+        $response->assertJson(function(AssertableJson $json) {
+            $json->whereType('data.id', 'integer')
+                ->whereType('data.name', 'string')
+                ->whereType('data.maxCapacity', 'integer')
+                ->whereType('data.regularPrice', 'integer|double')
+                ->whereType('data.discount', 'integer|double|null')
+                ->whereType('data.description', 'string')
+                ->whereType('data.image', 'string|null')
+                ->whereType('data.created_at', 'string')
+                ->whereType('data.updated_at', 'string')
+                ->etc();
+        });
 
         $this->assertDatabaseHas('properties', [
             'id' => $response->json('data.id'),
@@ -287,32 +284,31 @@ class PropertyControllerTest extends TestCase
         $response = $this->postJson("/api/property/{$property->id}", [
             'name' => 'Updated Property',
             'maxCapacity' => 20,
-            'regularPrice' => 200.00,
+            'regularPrice' => 200.50,
             'discount' => 20,
             'description' => "Updated description",
             'image' => null,
         ]);
 
         $response->assertStatus(200);
-        $response->assertJsonStructure([
-            'data' => [
-                'id',
-                'name',
-                'maxCapacity',
-                'regularPrice',
-                'discount',
-                'description',
-                'image',
-                'created_at',
-                'updated_at',
-            ]
-        ]);
+        $response->assertJson(function(AssertableJson $json) {
+            $json->whereType('data.id', 'integer')
+                ->where('data.name', 'Updated Property')
+                ->where('data.maxCapacity', 20)
+                ->where('data.regularPrice', 200.50)
+                ->where('data.discount', 20)
+                ->where('data.description', 'Updated description')
+                ->whereType('data.image', 'null')
+                ->whereType('data.created_at', 'string')
+                ->whereType('data.updated_at', 'string')
+                ->etc();
+        });
 
         $this->assertDatabaseHas('properties', [
             'id' => $property->id,
             'name' => 'Updated Property',
             'maxCapacity' => 20,
-            'regularPrice' => 200.00,
+            'regularPrice' => 200.50,
             'discount' => 20,
             'description' => "Updated description",
         ]);

@@ -21,7 +21,7 @@ class BookingResource extends JsonResource
             'endDate' => $this->endDate->toDateString(),
             'numNights' => $this->numNights,
             'numGuests' => $this->numGuests,
-            'propertyPrice' => $this->propertyPrice,
+            'propertyPrice' => (float) $this->propertyPrice,
             'extrasPrice' => (float) $this->extrasPrice,
             'totalPrice' => (float) $this->totalPrice,
             'status' => $this->status,

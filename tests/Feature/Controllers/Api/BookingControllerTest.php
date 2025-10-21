@@ -2,9 +2,10 @@
 
 namespace Tests\Feature\Controllers\Api;
 
-use App\Models\User;
+
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
+use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
 class BookingControllerTest extends TestCase
@@ -40,45 +41,38 @@ class BookingControllerTest extends TestCase
 
         $response = $this->getJson('/api/bookings');
         $response->assertStatus(200);
-        $response->assertJsonStructure([
-            'data' => [
-                'data' => [
-                    '*' => [
-                        'id',
-                        'startDate',
-                        'endDate',
-                        'numNights',
-                        'numGuests',
-                        'propertyPrice',
-                        'extrasPrice',
-                        'totalPrice',
-                        'status',
-                        'hasBreakfast',
-                        'isPaid',
-                        'observations',
-                        'guest' => [
-                            'id',
-                            'name',
-                            'email',
-                            'countryFlag',
-                        ],
-                        'property' => [
-                            'id',
-                            'name',
-                            'maxCapacity',
-                            'regularPrice',
-                            'discount',
-                            'description',
-                            'image',
-                            'created_at',
-                            'updated_at',
-                        ],
-                        'created_at',
-                        'updated_at',
-                    ],
-                ],
-            ],
-        ]);
+        $response->assertJson(function(AssertableJson $json) {
+            $json
+                ->has('success')
+                ->has('message')
+                ->whereType('data', 'array')
+                ->whereType('data.data', 'array')
+                ->whereType('data.data.0.id', 'integer')
+                ->whereType('data.data.0.startDate', 'string')
+                ->whereType('data.data.0.endDate', 'string')
+                ->whereType('data.data.0.numNights', 'integer')
+                ->whereType('data.data.0.numGuests', 'integer')
+                ->whereType('data.data.0.propertyPrice', "integer|double")
+                ->whereType('data.data.0.extrasPrice', "integer|double|null")
+                ->whereType('data.data.0.totalPrice', "integer|double")
+                ->whereType('data.data.0.status', 'string')
+                ->whereType('data.data.0.isPaid', 'boolean')
+                ->whereType('data.data.0.hasBreakfast', 'boolean')
+                ->whereType('data.data.0.observations', "string|null")
+                ->whereType('data.data.0.guest', 'array')
+                ->whereType('data.data.0.guest.id', 'integer')
+                ->whereType('data.data.0.guest.name', 'string')
+                ->whereType('data.data.0.guest.email', 'string')
+                ->whereType('data.data.0.guest.countryFlag', 'string')
+                ->whereType('data.data.0.property.id', 'integer')
+                ->whereType('data.data.0.property.name', 'string')
+                ->whereType('data.data.0.property.maxCapacity', 'integer')
+                ->whereType('data.data.0.property.regularPrice', "integer|double")
+                ->whereType('data.data.0.property.discount', "integer|double|null")
+                ->whereType('data.data.0.property.description', 'string')
+                ->whereType('data.data.0.property.image', "string|null")
+                ->etc();
+        });
 
 
         $response = $this->getJson('/api/bookings');
@@ -163,41 +157,36 @@ class BookingControllerTest extends TestCase
         $response = $this->getJson('/api/bookings/' . $booking->id);
 
         $response->assertStatus(200);
-        $response->assertJsonStructure([
-            "data" => [
-                'id',
-                'startDate',
-                'endDate',
-                'numNights',
-                'numGuests',
-                'propertyPrice',
-                'extrasPrice',
-                'totalPrice',
-                'status',
-                'hasBreakfast',
-                'isPaid',
-                'observations',
-                'guest' => [
-                    'id',
-                    'name',
-                    'email',
-                    'countryFlag',
-                ],
-                'property' => [
-                    'id',
-                    'name',
-                    'maxCapacity',
-                    'regularPrice',
-                    'discount',
-                    'description',
-                    'image',
-                    'created_at',
-                    'updated_at',
-                ],
-                'created_at',
-                'updated_at',
-            ]
-        ]);
+        $response->assertJson(function(AssertableJson $json) {
+            $json
+                ->has('success')
+                ->has('message')
+                ->whereType('data.id', 'integer')
+                ->whereType('data.startDate', 'string')
+                ->whereType('data.endDate', 'string')
+                ->whereType('data.numNights', 'integer')
+                ->whereType('data.numGuests', 'integer')
+                ->whereType('data.propertyPrice', "integer|double")
+                ->whereType('data.extrasPrice', "integer|double|null")
+                ->whereType('data.totalPrice', "integer|double")
+                ->whereType('data.status', 'string')
+                ->whereType('data.isPaid', 'boolean')
+                ->whereType('data.hasBreakfast', 'boolean')
+                ->whereType('data.observations', "string|null")
+                ->whereType('data.guest', 'array')
+                ->whereType('data.guest.id', 'integer')
+                ->whereType('data.guest.name', 'string')
+                ->whereType('data.guest.email', 'string')
+                ->whereType('data.guest.countryFlag', 'string')
+                ->whereType('data.property.id', 'integer')
+                ->whereType('data.property.name', 'string')
+                ->whereType('data.property.maxCapacity', 'integer')
+                ->whereType('data.property.regularPrice', 'double')
+                ->whereType('data.property.discount', "integer|double|null")
+                ->whereType('data.property.description', 'string')
+                ->whereType('data.property.image', "string|null")
+                ->etc();
+        });
     }
 
     public function testIfCheckinFailsIfUnauthenticated(): void
@@ -331,38 +320,31 @@ class BookingControllerTest extends TestCase
         $response = $this->getJson('/api/bookings/stats?last=7');
 
         $response->assertStatus(200);
-        $response->assertJsonStructure([
-            'data' => [
-                'numBookings',
-                'sales',
-                'occupancyRate',
-                'confirmedStaysCount',
-                'confirmedStays' => [
-                    '*' => [
-                        'id',
-                        'startDate',
-                        'endDate',
-                        'numNights',
-                        'totalPrice',
-                        'extrasPrice',
-                        'status',
-                        'created_at'
-                    ],
-                ],
-                'bookings' => [
-                    "*" => [
-                        'id',
-                        'startDate',
-                        'endDate',
-                        'numNights',
-                        'totalPrice',
-                        'extrasPrice',
-                        'status',
-                        'created_at'
-                    ],
-                ],
-            ],
-        ]);
+        $response->assertJson(function (AssertableJson $json) {
+            $json->whereType('data.numBookings', 'integer')
+                ->whereType('data.sales', "integer|double")
+                ->whereType('data.occupancyRate', "integer|double")
+                ->whereType('data.confirmedStaysCount', 'integer')
+                ->whereType('data.confirmedStays', 'array')
+                ->whereType('data.confirmedStays.0.id', 'integer')
+                ->whereType('data.confirmedStays.0.startDate', 'string')
+                ->whereType('data.confirmedStays.0.endDate', 'string')
+                ->whereType('data.confirmedStays.0.numNights', 'integer')
+                ->whereType('data.confirmedStays.0.totalPrice', "integer|double|null")
+                ->whereType('data.confirmedStays.0.extrasPrice', "integer|double|null")
+                ->whereType('data.confirmedStays.0.status', 'string')
+                ->whereType('data.confirmedStays.0.created_at', 'string')
+                ->whereType('data.bookings', 'array')
+                ->whereType('data.bookings.0.id', 'integer')
+                ->whereType('data.bookings.0.startDate', 'string')
+                ->whereType('data.bookings.0.endDate', 'string')
+                ->whereType('data.bookings.0.numNights', 'integer')
+                ->whereType('data.bookings.0.totalPrice', "integer|double|null")
+                ->whereType('data.bookings.0.extrasPrice', "integer|double|null")
+                ->whereType('data.bookings.0.status', 'string')
+                ->whereType('data.bookings.0.created_at', 'string')
+                ->etc();
+        });
     }
 
     public function testIfDeleteBookingFailsIfUnauthenticated(): void
@@ -429,42 +411,33 @@ class BookingControllerTest extends TestCase
         $response = $this->getJson('/api/bookings/today-activity?last=7');
 
         $response->assertStatus(200);
-        $response->assertJsonStructure([
-            "data" => [
-                "*" => [
-                    'id',
-                    'startDate',
-                    'endDate',
-                    'numNights',
-                    'numGuests',
-                    'propertyPrice',
-                    'extrasPrice',
-                    'totalPrice',
-                    'status',
-                    'hasBreakfast',
-                    'isPaid',
-                    'observations',
-                    'guest' => [
-                        'id',
-                        'name',
-                        'email',
-                        'countryFlag',
-                    ],
-                    'property' => [
-                        'id',
-                        'name',
-                        'maxCapacity',
-                        'regularPrice',
-                        'discount',
-                        'description',
-                        'image',
-                        'created_at',
-                        'updated_at',
-                    ],
-                    'created_at',
-                    'updated_at',
-                ]
-            ]
-        ]);
+        $response->assertJson(function (AssertableJson $json) {
+            $json->whereType('data', 'array')
+                ->whereType('data.0.id', 'integer')
+                ->whereType('data.0.startDate', 'string')
+                ->whereType('data.0.endDate', 'string')
+                ->whereType('data.0.numNights', 'integer')
+                ->whereType('data.0.numGuests', 'integer')
+                ->whereType('data.0.propertyPrice', "integer|double|null")
+                ->whereType('data.0.extrasPrice', "integer|double|null")
+                ->whereType('data.0.totalPrice', "integer|double|null")
+                ->whereType('data.0.status', 'string')
+                ->whereType('data.0.isPaid', 'boolean')
+                ->whereType('data.0.hasBreakfast', 'boolean')
+                ->whereType('data.0.observations', "string|null")
+                ->whereType('data.0.guest', 'array')
+                ->whereType('data.0.guest.id', 'integer')
+                ->whereType('data.0.guest.name', 'string')
+                ->whereType('data.0.guest.email', 'string')
+                ->whereType('data.0.guest.countryFlag', 'string')
+                ->whereType('data.0.property.id', 'integer')
+                ->whereType('data.0.property.name', 'string')
+                ->whereType('data.0.property.maxCapacity', 'integer')
+                ->whereType('data.0.property.regularPrice', 'double')
+                ->whereType('data.0.property.discount', "integer|double|null")
+                ->whereType('data.0.property.description', 'string')
+                ->whereType('data.0.property.image', "string|null")
+                ->etc();
+        });
     }
 }
