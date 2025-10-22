@@ -5,10 +5,11 @@ use App\Http\Controllers\Api\BookingController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\SettingController;
+use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:api,sanctum');
-Route::any('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum');
+Route::any('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum,api');
 
 Route::group(['prefix' => 'auth'], function () {
     Route::post('/login', [AuthController::class, 'login']);

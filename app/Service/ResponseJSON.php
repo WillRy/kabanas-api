@@ -29,6 +29,11 @@ class ResponseJSON
         return new ResponseJSON;
     }
 
+    public function getSuccess(): bool
+    {
+        return $this->success;
+    }
+
     /**
      * @return array<int>
      */
@@ -125,7 +130,7 @@ class ResponseJSON
             if (isset($origem['class']) && $incluiNamespaceApp) {
                 $this->message = $error->getMessage();
             } elseif ($this->statusCode == 500 && ! config('app.debug')) {
-                $this->message = 'Erro interno no servidor';
+                $this->message = 'Server Error';
             }
         }
 
@@ -141,6 +146,11 @@ class ResponseJSON
         $this->errors = $errors ?? [];
 
         return $this;
+    }
+
+    public function getErrors(): ?array
+    {
+        return $this->errors;
     }
 
     public static function removeNumericKeys(&$array): mixed
@@ -169,35 +179,7 @@ class ResponseJSON
         return $array;
     }
 
-    public function removeHiddenFieldsRecursively(&$array): mixed
-    {
 
-        if (! is_array($array)) {
-            return $array;
-        }
-
-        if (empty($array)) {
-            return $array;
-        }
-
-        foreach ($array as $key => &$value) {
-            if (is_array($value)) {
-                $this->removeHiddenFieldsRecursively($value);
-            }
-        }
-
-        return $array;
-    }
-
-    public function handleRender(): mixed
-    {
-        $data = $this->data;
-        if ($this->hideNumericIndex) {
-            $data = self::removeNumericKeys($data);
-        }
-
-        return $data;
-    }
 
     /**
      * Esconde indices númericos dos arrays, principalmente
@@ -208,6 +190,11 @@ class ResponseJSON
         $this->hideNumericIndex = $hideNumericIndex;
 
         return $this;
+    }
+
+    public function getHideNumericIndex(): bool
+    {
+        return $this->hideNumericIndex;
     }
 
     public function render(): JsonResponse

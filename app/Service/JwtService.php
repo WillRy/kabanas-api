@@ -31,7 +31,7 @@ class JwtService
     /**
      * Generate authentication JWT token
      */
-    public function createJwt(
+    protected function createJwt(
         int $userId,
         int $sessionId
     ): string {
@@ -44,12 +44,12 @@ class JwtService
     /**
      * Generate opaque refresh token
      */
-    public function createRefreshToken(): string
+    protected function createRefreshToken(): string
     {
         return Str::random(64);
     }
 
-    public function setCookie(string $name, string $value, bool $forceExpire = false, bool $httpOnly = true)
+    protected function setCookie(string $name, string $value, bool $forceExpire = false, bool $httpOnly = true)
     {
         if (! $this->useCookies) {
             return;
@@ -117,7 +117,7 @@ class JwtService
         return $isTokenValid;
     }
 
-    public function payloadToken(string $token): ?stdClass
+    protected function payloadToken(string $token): ?stdClass
     {
         $jwtParts = explode('.', $token);
         $jwtPayload = base64_decode($jwtParts[1]);
@@ -128,10 +128,14 @@ class JwtService
     /**
      * Check if authentication token is valid
      */
-    public function validateToken(
+    protected function validateToken(
         string $token
     ): bool {
         $payload = $this->payloadToken($token);
+
+        if(empty($payload->session_id)) {
+            return false;
+        }
 
         $token = DB::table('auth_token')
             ->selectRaw('
@@ -150,7 +154,7 @@ class JwtService
     /**
      * Retorna a expiração do token JWT
      */
-    public function getTokenExpiration(string $token): ?string
+    protected function getTokenExpiration(string $token): ?string
     {
         $jwtParts = explode('.', $token);
         $jwtPayload = base64_decode($jwtParts[1]);
@@ -302,37 +306,13 @@ class JwtService
             ->delete();
     }
 
-    public function getValidRefreshToken(int $parentRefreshId): ?object
+    protected function getValidRefreshToken(int $parentRefreshId): ?object
     {
         return DB::table('refresh_token')
             ->where('refresh_id', '=', $parentRefreshId)
             ->whereRaw('(token_expiration > ?)', [now()])
             ->orderBy('id', 'desc')
             ->first();
-    }
-
-    public function getCurrentSessionId(): ?int
-    {
-        $token = $this->tokenRequest();
-
-        if (empty($token)) {
-            return null;
-        }
-
-        $token = DB::table('auth_token')
-            ->where('token', '=', $token)
-            ->first();
-
-        if (empty($token)) {
-            return null;
-        }
-
-        return $token->token_session_id;
-    }
-
-    public static function tokenRequest(): ?string
-    {
-        return Request::bearerToken() ?? Cookie::get('token');
     }
 
     public function cleanOldData()

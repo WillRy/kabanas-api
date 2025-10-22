@@ -18,6 +18,7 @@ use Illuminate\Http\Response;
 use Illuminate\Support\Facades\Auth;
 use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\Mail;
+use Laravel\Sanctum\PersonalAccessToken;
 
 class AuthController extends Controller
 {
@@ -36,7 +37,9 @@ class AuthController extends Controller
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $tokens = (new JwtService)->doAuth($user->id);
+        $useCookie = !empty($request->query('cookie'));
+
+        $tokens = (new JwtService($useCookie))->doAuth($user->id);
 
         return ResponseJSON::getInstance()
             ->setMessage('Successfully logged in')
@@ -67,7 +70,11 @@ class AuthController extends Controller
         if (Auth::guard("sanctum")->check() && $request->user()->currentAccessToken()) {
             /** @var \App\Models\User $user */
             $user = $request->user();
-            $user->currentAccessToken()->delete();
+
+            /** @var PersonalAccessToken $token */
+            $token = $user->currentAccessToken();
+
+            $token->delete();
         }
 
         Auth::guard("web")->logout();
