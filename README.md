@@ -3,6 +3,11 @@
 Kabanas é uma plataforma completa para gestão de aluguel de cabanas e casas por temporada, composta por uma API backend em Laravel e um frontend SPA em React.
 A aplicação oferece autenticação segura, controle de usuários, gestão de imóveis, reservas, e interface moderna e responsiva.
 
+Repositórios:
+
+- Backend: https://github.com/WillRy/kabanas-api
+- FrontEnd: https://github.com/WillRy/kabanas-spa
+
 ## ⚙️ Backend — Laravel API
 
 ### 🧱 Stack
