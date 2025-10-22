@@ -28,7 +28,7 @@ O backend utiliza uma combinação de:
 - Sanctum para autenticação de sessões SPA;
 - JWT + Refresh Tokens para acessos via dispositivos móveis ou externos.
 
-### 🧪 Testes
+### 🧪 Testes (100% de cobertura)
 
 Cobertura completa de:
 
@@ -37,6 +37,14 @@ Models: Validação de relacionamentos, casts e mutators.
 Controllers: Fluxos de autenticação, criação e listagem de recursos.
 
 Endpoints: Testes de integração cobrindo rotas REST principais.
+
+```shell
+#rodar os testes
+php artisan test
+
+#gerar relatorio de cobertura (vai gerar um index.html dentro da pasta coverage)
+php artisan test --coverage-html coverage
+```
 
 ### 📨 Filas de E-mail
 

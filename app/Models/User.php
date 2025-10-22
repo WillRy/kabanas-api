@@ -78,10 +78,6 @@ class User extends Authenticatable
         return $this->hasOne(Guest::class);
     }
 
-    public static function getMasterAdmin(): ?User
-    {
-        return User::query()->where('email', '=', 'admin@admin.com')->first();
-    }
 
     public function createUser(array $data)
     {
