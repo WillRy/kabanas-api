@@ -33,7 +33,6 @@ class AuthController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-        $abilities = $user->userPermissions();
 
         $token = $user->createToken('auth_token')->plainTextToken;
 
@@ -41,13 +40,14 @@ class AuthController extends Controller
 
         $tokens = (new JwtService($useCookie))->doAuth($user->id);
 
+        $user->loadedPermissions = $user->userPermissions();
+
         return ResponseJSON::getInstance()
             ->setMessage('Successfully logged in')
             ->setData([
                 'user' => new UserResource($user),
                 'access_token' => $token,
                 'token_type' => 'Bearer',
-                'abilities' => $abilities,
                 'tokens' => $tokens,
             ])
             ->setStatusCode(201)
@@ -58,6 +58,8 @@ class AuthController extends Controller
     {
         /** @var \App\Models\User $user */
         $user = $request->user();
+
+        $user->loadedPermissions = $user->userPermissions();
 
         return ResponseJSON::getInstance()
             ->setData(new UserResource($user))

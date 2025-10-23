@@ -45,32 +45,34 @@ class BookingControllerTest extends TestCase
             $json
                 ->has('success')
                 ->has('message')
-                ->whereType('data', 'array')
-                ->whereType('data.data', 'array')
-                ->whereType('data.data.0.id', 'integer')
-                ->whereType('data.data.0.startDate', 'string')
-                ->whereType('data.data.0.endDate', 'string')
-                ->whereType('data.data.0.numNights', 'integer')
-                ->whereType('data.data.0.numGuests', 'integer')
-                ->whereType('data.data.0.propertyPrice', "integer|double")
-                ->whereType('data.data.0.extrasPrice', "integer|double|null")
-                ->whereType('data.data.0.totalPrice', "integer|double")
-                ->whereType('data.data.0.status', 'string')
-                ->whereType('data.data.0.isPaid', 'boolean')
-                ->whereType('data.data.0.hasBreakfast', 'boolean')
-                ->whereType('data.data.0.observations', "string|null")
-                ->whereType('data.data.0.guest', 'array')
-                ->whereType('data.data.0.guest.id', 'integer')
-                ->whereType('data.data.0.guest.name', 'string')
-                ->whereType('data.data.0.guest.email', 'string')
-                ->whereType('data.data.0.guest.countryFlag', 'string')
-                ->whereType('data.data.0.property.id', 'integer')
-                ->whereType('data.data.0.property.name', 'string')
-                ->whereType('data.data.0.property.maxCapacity', 'integer')
-                ->whereType('data.data.0.property.regularPrice', "integer|double")
-                ->whereType('data.data.0.property.discount', "integer|double|null")
-                ->whereType('data.data.0.property.description', 'string')
-                ->whereType('data.data.0.property.image', "string|null")
+                ->whereAllType([
+                    'data' => 'array',
+                    'data.data' => 'array',
+                    'data.data.0.id' => 'integer',
+                    'data.data.0.startDate' => 'string',
+                    'data.data.0.endDate' => 'string',
+                    'data.data.0.numNights' => 'integer',
+                    'data.data.0.numGuests' => 'integer',
+                    'data.data.0.propertyPrice' => 'integer|double',
+                    'data.data.0.extrasPrice' => 'integer|double|null',
+                    'data.data.0.totalPrice' => 'integer|double',
+                    'data.data.0.status' => 'string',
+                    'data.data.0.isPaid' => 'boolean',
+                    'data.data.0.hasBreakfast' => 'boolean',
+                    'data.data.0.observations' => 'string|null',
+                    'data.data.0.guest' => 'array',
+                    'data.data.0.guest.id' => 'integer',
+                    'data.data.0.guest.name' => 'string',
+                    'data.data.0.guest.email' => 'string',
+                    'data.data.0.guest.countryFlag' => 'string',
+                    'data.data.0.property.id' => 'integer',
+                    'data.data.0.property.name' => 'string',
+                    'data.data.0.property.maxCapacity' => 'integer',
+                    'data.data.0.property.regularPrice' => 'integer|double',
+                    'data.data.0.property.discount' => 'integer|double|null',
+                    'data.data.0.property.description' => 'string',
+                    'data.data.0.property.image' => 'string|null',
+                ])
                 ->etc();
         });
 

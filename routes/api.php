@@ -8,7 +8,7 @@ use App\Http\Controllers\Api\SettingController;
 use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
-Route::get('/user', [AuthController::class, 'user'])->middleware('auth:api,sanctum');
+Route::get('/user', [AuthController::class, 'user'])->middleware('auth:api,sanctum,api');
 Route::any('/logout', [AuthController::class, 'logout'])->middleware('auth:sanctum,api');
 
 Route::group(['prefix' => 'auth'], function () {

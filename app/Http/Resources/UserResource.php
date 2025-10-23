@@ -20,6 +20,7 @@ class UserResource extends JsonResource
             'name' => $this->name,
             'email' => $this->email,
             'avatar' => $this->avatar ? asset(Storage::url($this->avatar)) : null,
+            'permissions' => $this->loadedPermissions ? $this->loadedPermissions : [],
         ];
     }
 }

@@ -54,10 +54,10 @@ class AuthControllerTest extends TestCase
                     'id',
                     'name',
                     'email',
+                    'permissions'
                 ],
                 'access_token',
                 'token_type',
-                'abilities',
                 'tokens' => [
                     'session',
                     'token',

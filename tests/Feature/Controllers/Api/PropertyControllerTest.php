@@ -53,19 +53,21 @@ class PropertyControllerTest extends TestCase
         $response = $this->getJson('/api/property');
 
         $response->assertStatus(200);
-        $response->assertJson(function(AssertableJson $json) {
+        $response->assertJson(function (AssertableJson $json) {
             $json
                 ->has('data')
                 ->has('data.data')
-                ->whereType('data.data.0.id', 'integer')
-                 ->whereType('data.data.0.name', 'string')
-                 ->whereType('data.data.0.maxCapacity', 'integer')
-                 ->whereType('data.data.0.regularPrice', 'integer|double')
-                 ->whereType('data.data.0.discount', 'integer|double|null')
-                 ->whereType('data.data.0.description', 'string')
-                 ->whereType('data.data.0.image', "string|null")
-                 ->whereType('data.data.0.created_at', 'string')
-                 ->whereType('data.data.0.updated_at', 'string')
+                ->whereAllType([
+                    'data.data.0.id' => 'integer',
+                    'data.data.0.name' => 'string',
+                    'data.data.0.maxCapacity' => 'integer',
+                    'data.data.0.regularPrice' => 'integer|double',
+                    'data.data.0.discount' => 'integer|double|null',
+                    'data.data.0.description' => 'string',
+                    'data.data.0.image' => 'string|null',
+                    'data.data.0.created_at' => 'string',
+                    'data.data.0.updated_at' => 'string',
+                ])
                 ->etc();
         });
 
@@ -169,17 +171,18 @@ class PropertyControllerTest extends TestCase
         $response->assertStatus(201);
 
 
-        $response->assertJson(function(AssertableJson $json) {
-            $json->whereType('data.id', 'integer')
-                ->whereType('data.name', 'string')
-                ->whereType('data.maxCapacity', 'integer')
-                ->whereType('data.regularPrice', 'integer|double')
-                ->whereType('data.discount', 'integer|double|null')
-                ->whereType('data.description', 'string')
-                ->whereType('data.image', 'string|null')
-                ->whereType('data.created_at', 'string')
-                ->whereType('data.updated_at', 'string')
-                ->etc();
+        $response->assertJson(function (AssertableJson $json) {
+            $json->whereAllType([
+                'data.id' => 'integer',
+                'data.name' => 'string',
+                'data.maxCapacity' => 'integer',
+                'data.regularPrice' => 'integer|double',
+                'data.discount' => 'integer|double|null',
+                'data.description' => 'string',
+                'data.image' => 'string|null',
+                'data.created_at' => 'string',
+                'data.updated_at' => 'string',
+            ])->etc();
         });
 
         $this->assertDatabaseHas('properties', [
@@ -291,16 +294,21 @@ class PropertyControllerTest extends TestCase
         ]);
 
         $response->assertStatus(200);
-        $response->assertJson(function(AssertableJson $json) {
-            $json->whereType('data.id', 'integer')
-                ->where('data.name', 'Updated Property')
+        $response->assertJson(function (AssertableJson $json) {
+            $json->where('data.name', 'Updated Property')
                 ->where('data.maxCapacity', 20)
                 ->where('data.regularPrice', 200.50)
                 ->where('data.discount', 20)
                 ->where('data.description', 'Updated description')
-                ->whereType('data.image', 'null')
-                ->whereType('data.created_at', 'string')
-                ->whereType('data.updated_at', 'string')
+                ->whereAllType([
+                    'data.id' => 'integer',
+                    'data.maxCapacity' => 'integer',
+                    'data.regularPrice' => 'integer|double',
+                    'data.discount' => 'integer|double|null',
+                    'data.image' => 'string|null',
+                    'data.created_at' => 'string',
+                    'data.updated_at' => 'string',
+                ])
                 ->etc();
         });
 

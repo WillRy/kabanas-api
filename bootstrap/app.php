@@ -16,15 +16,8 @@ return Application::configure(basePath: dirname(__DIR__))
         $middleware->statefulApi();
         $middleware->encryptCookies(['token', 'refresh_token']);
 
-        $middleware->appendToGroup('api', \App\Http\Middleware\FormatJsonResponse::class);
+        $middleware->prependToGroup('api', \App\Http\Middleware\FormatJsonResponse::class);
     })
     ->withExceptions(function (Exceptions $exceptions): void {
-        $exceptions->renderable(function (\Illuminate\Auth\AuthenticationException $e, $request) {
-            if ($request->wantsJson() || $request->expectsJson()) {
-                return ResponseJSON::getInstance()
-                    ->setError($e)
-                    ->setStatusCode(401)
-                    ->render();
-            }
-        });
+        //
     })->create();

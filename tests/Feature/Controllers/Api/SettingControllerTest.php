@@ -33,15 +33,17 @@ class SettingControllerTest extends TestCase
         ]);
 
         $response->assertJson(function (AssertableJson $json) {
-            $json->whereType('success', 'boolean');
-            $json->whereType('message', 'string|null');
-            $json->whereType('errors', 'array|null');
-            $json->whereType('error_code', 'string|null|integer');
-            $json->whereType('data.id', "integer");
-            $json->whereType('data.minBookingLength', "integer")
-                ->whereType('data.maxBookingLength', "integer")
-                ->whereType('data.maxGuestsPerBooking', "integer")
-                ->whereType('data.breakfastPrice', "string");
+            $json->whereAllType([
+                'success' => 'boolean',
+                'message' => 'string|null',
+                'errors' => 'array|null',
+                'error_code' => 'string|null|integer',
+                'data.id' => 'integer',
+                'data.minBookingLength' => 'integer',
+                'data.maxBookingLength' => 'integer',
+                'data.maxGuestsPerBooking' => 'integer',
+                'data.breakfastPrice' => 'string',
+            ]);
         });
     }
 

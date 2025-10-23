@@ -47,7 +47,6 @@ class FormatJsonResponse
             $response->setData($responseClass->preRender());
 
             $response->setStatusCode($responseClass->getStatusCode());
-
         }
 
         return $response;

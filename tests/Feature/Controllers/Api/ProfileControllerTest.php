@@ -57,6 +57,7 @@ class ProfileControllerTest extends TestCase
                 'name',
                 'email',
                 'avatar',
+                'permissions'
             ],
         ]);
 
