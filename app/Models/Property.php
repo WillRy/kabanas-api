@@ -6,6 +6,7 @@ use App\Policies\PropertyPolicy;
 use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 
@@ -28,6 +29,11 @@ class Property extends Model
         'discount' => 'float',
         'maxCapacity' => 'integer',
     ];
+
+    public function bookings(): HasMany
+    {
+        return $this->hasMany(Booking::class);
+    }
 
     public function newProperty(array $attributes = [])
     {
@@ -86,5 +92,25 @@ class Property extends Model
         Gate::authorize('delete', $this);
 
         $this->delete();
+    }
+
+    public function getUnavailableDates(int $propertyId)
+    {
+        $bookings = Booking::query()
+            ->where("startDate", '>=', now()->format('Y-m-d'))
+            ->where('property_id', $propertyId)
+            ->orderBy('startDate')
+            ->get();
+
+        $bookedDates = [];
+
+        foreach ($bookings as $booking) {
+            $period = \Carbon\CarbonPeriod::create($booking->startDate, $booking->endDate);
+            foreach ($period as $date) {
+                $bookedDates[] = $date->format('Y-m-d');
+            }
+        }
+
+        return array_values(array_unique($bookedDates));
     }
 }

@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Models;
 
+use App\Models\Booking;
 use App\Models\Property;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -207,5 +209,34 @@ class PropertyTest extends TestCase
 
         $this->expectException(\Illuminate\Auth\Access\AuthorizationException::class);
         $property->deleteProperty();
+    }
+
+    public function testIfCanGetUnavailableDates()
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $property = Property::factory()->create();
+
+        $period = \Carbon\CarbonPeriod::create(now(), now()->addDays(5));
+        $periodDays = array_map(function (Carbon $date) {
+            return $date->format('Y-m-d');
+        }, $period->toArray());
+
+        Booking::factory()->create([
+            'property_id' => $property->id,
+            'startDate' => $periodDays[0],
+            'endDate' => $periodDays[count($periodDays) - 1],
+        ]);
+
+        $unavailableDates = $property->getUnavailableDates($property->id);
+
+        $this->assertIsArray($unavailableDates);
+
+        $this->assertEqualsCanonicalizing(
+            $periodDays,
+            $unavailableDates
+        );
     }
 }

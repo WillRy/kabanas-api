@@ -56,4 +56,15 @@ class PropertyController extends Controller
 
         return response()->noContent();
     }
+
+    public function unavailableDates(Property $property)
+    {
+        Gate::authorize('viewAny', Property::class);
+
+        $availableDays = (new Property)->getUnavailableDates($property->id);
+
+        return ResponseJSON::getInstance()
+            ->setData($availableDays)
+            ->render();
+    }
 }

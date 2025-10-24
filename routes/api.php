@@ -23,6 +23,8 @@ Route::group(['prefix' => 'property', 'middleware' => ['auth:api,sanctum']], fun
     Route::post('/', [PropertyController::class, 'store']);
     Route::post('/{property}', [PropertyController::class, 'update']);
     Route::delete('/{property}', [PropertyController::class, 'destroy']);
+
+    Route::get('/{property}/unavailable-dates', [PropertyController::class, 'unavailableDates']);
 });
 
 Route::group(['prefix' => 'bookings', 'middleware' => ['auth:api,sanctum']], function () {

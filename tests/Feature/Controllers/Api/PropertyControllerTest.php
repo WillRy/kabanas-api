@@ -2,8 +2,10 @@
 
 namespace Tests\Feature\Controllers\Api;
 
+use App\Models\Booking;
 use App\Models\Property;
 use App\Models\User;
+use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
@@ -320,5 +322,40 @@ class PropertyControllerTest extends TestCase
             'discount' => 20,
             'description' => "Updated description",
         ]);
+    }
+
+    public function testIfUnavailableDatesCanBeFetched(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $property = Property::factory()->create();
+
+        $period = \Carbon\CarbonPeriod::create(now(), now()->addDays(5));
+        $periodDays = array_map(function (Carbon $date) {
+            return $date->format('Y-m-d');
+        }, $period->toArray());
+
+        Booking::factory()->create([
+            'property_id' => $property->id,
+            'startDate' => $periodDays[0],
+            'endDate' => $periodDays[count($periodDays) - 1],
+        ]);
+
+        $response = $this->getJson("/api/property/{$property->id}/unavailable-dates");
+
+        $response->assertStatus(200);
+
+        $response->assertJson(function (AssertableJson $json) use ($periodDays) {
+            $json->has('data')
+                ->where('data.0', $periodDays[0])
+                ->where('data.1', $periodDays[1])
+                ->where('data.2', $periodDays[2])
+                ->where('data.3', $periodDays[3])
+                ->where('data.4', $periodDays[4])
+                ->where('data.5', $periodDays[5])
+                ->etc();
+        });
     }
 }
