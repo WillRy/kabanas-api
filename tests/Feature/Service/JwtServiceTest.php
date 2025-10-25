@@ -5,20 +5,19 @@ namespace Tests\Feature\Service;
 use App\Models\User;
 use App\Service\JwtService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Http\Request;
 use Illuminate\Support\Facades\DB;
 
 class JwtServiceTest extends \Tests\TestCase
 {
     use RefreshDatabase;
 
-    public function testIfCanDoAuth(): void
+    public function test_if_can_do_auth(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         $this->assertIsObject($tokens);
@@ -47,7 +46,7 @@ class JwtServiceTest extends \Tests\TestCase
         ]);
     }
 
-    public function testIfCanDoAuthWithCookies():void
+    public function test_if_can_do_auth_with_cookies(): void
     {
         $this->seed();
 
@@ -55,20 +54,20 @@ class JwtServiceTest extends \Tests\TestCase
 
         $response = $this->post('/api/auth/login?cookie=1', [
             'email' => $user->email,
-            'password' => 'password'
+            'password' => 'password',
         ]);
 
         $response->assertStatus(201);
 
     }
 
-    public function testIfCanCheckIfUserIsLogged(): void
+    public function test_if_can_check_if_user_is_logged(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         $isLogged = $jwt->isLogged($tokens->token);
@@ -76,21 +75,21 @@ class JwtServiceTest extends \Tests\TestCase
         $this->assertTrue($isLogged);
     }
 
-    public function testIfMethodIsLoggedReturnsFalseForInvalidToken(): void
+    public function test_if_method_is_logged_returns_false_for_invalid_token(): void
     {
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $isLogged = $jwt->isLogged('invalid.token.here');
 
         $this->assertFalse($isLogged);
     }
 
-    public function testIfRefreshTokenFailsWithInexistentToken(): void
+    public function test_if_refresh_token_fails_with_inexistent_token(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         DB::table('refresh_token')
@@ -101,13 +100,13 @@ class JwtServiceTest extends \Tests\TestCase
         $jwt->refreshToken($tokens->refresh_token);
     }
 
-    public function testIfRefreshTokenFailsWithExpiredToken(): void
+    public function test_if_refresh_token_fails_with_expired_token(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         // Manually expire the refresh token
@@ -119,13 +118,13 @@ class JwtServiceTest extends \Tests\TestCase
         $jwt->refreshToken($tokens->refresh_token);
     }
 
-    public function testIfRefreshTokenWorks(): void
+    public function test_if_refresh_token_works(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         $newTokens = $jwt->refreshToken($tokens->refresh_token);
@@ -160,13 +159,13 @@ class JwtServiceTest extends \Tests\TestCase
         ]);
     }
 
-    public function testIfRefreshTokenReturnsSameRefreshWithSequencialRefresh(): void
+    public function test_if_refresh_token_returns_same_refresh_with_sequencial_refresh(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         $currentRefresh = $jwt->refreshToken($tokens->refresh_token);
@@ -175,13 +174,13 @@ class JwtServiceTest extends \Tests\TestCase
         $this->assertEquals($finalRefresh->refresh_token, $currentRefresh->refresh_token);
     }
 
-    public function testIfCanDeleteLoginByToken(): void
+    public function test_if_can_delete_login_by_token(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         $jwt->deleteLoginByToken($tokens->token);
@@ -199,13 +198,13 @@ class JwtServiceTest extends \Tests\TestCase
         ]);
     }
 
-    public function testIfDeleteLoginByTokenExitWhenTokenIsInvalid(): void
+    public function test_if_delete_login_by_token_exit_when_token_is_invalid(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         // Invalid token
@@ -214,18 +213,18 @@ class JwtServiceTest extends \Tests\TestCase
         $this->assertFalse($return);
     }
 
-    public function testIfCanLogoutByTokens(): void
+    public function test_if_can_logout_by_tokens(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         $this->actingAs($user, 'api');
 
-        $this->post('/api/logout', [], ['Authorization' => 'Bearer ' . $tokens->token]);
+        $this->post('/api/logout', [], ['Authorization' => 'Bearer '.$tokens->token]);
 
         $this->assertDatabaseMissing('token_sessions', [
             'id' => $tokens->session->id,
@@ -240,13 +239,13 @@ class JwtServiceTest extends \Tests\TestCase
         ]);
     }
 
-    public function testIfCanDeleteExpiredTokens(): void
+    public function test_if_can_delete_expired_tokens(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         // Manually expire the auth token
@@ -269,16 +268,14 @@ class JwtServiceTest extends \Tests\TestCase
         ]);
     }
 
-    public function testIfCanDeleteTokensBySessionId(): void
+    public function test_if_can_delete_tokens_by_session_id(): void
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
-
-
 
         $jwt->deleteTokensBySession($tokens->session->id);
 
@@ -291,13 +288,13 @@ class JwtServiceTest extends \Tests\TestCase
         ]);
     }
 
-    public function testIfCanCleanOldSessions()
+    public function test_if_can_clean_old_sessions()
     {
         $this->seed();
 
         $user = User::first();
 
-        $jwt = new JwtService();
+        $jwt = new JwtService;
         $tokens = $jwt->doAuth($user->id);
 
         DB::table('auth_token')
@@ -313,7 +310,6 @@ class JwtServiceTest extends \Tests\TestCase
         $this->assertDatabaseMissing('token_sessions', [
             'id' => $tokens->session->id,
         ]);
-
 
         $this->assertDatabaseMissing('auth_token', [
             'token' => $tokens->token,

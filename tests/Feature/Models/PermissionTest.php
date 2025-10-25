@@ -3,15 +3,13 @@
 namespace Tests\Feature\Models;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class PermissionTest extends TestCase
 {
-
     use RefreshDatabase;
 
-    public function testIfPermissionCanBeCreated()
+    public function test_if_permission_can_be_created()
     {
         \App\Models\Permission::create([
             'name' => 'edit articles',
@@ -24,7 +22,7 @@ class PermissionTest extends TestCase
         ]);
     }
 
-    public function testIfPermissionHasRolesRelationship()
+    public function test_if_permission_has_roles_relationship()
     {
         $permission = \App\Models\Permission::create([
             'name' => 'delete articles',

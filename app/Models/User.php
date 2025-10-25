@@ -78,7 +78,6 @@ class User extends Authenticatable
         return $this->hasOne(Guest::class);
     }
 
-
     public function createUser(array $data)
     {
         $userAlreadyExists = User::where('email', $data['email'])->first();
@@ -93,10 +92,8 @@ class User extends Authenticatable
 
         $user->guestProfile()->create($data);
 
-
         return $user;
     }
-
 
     public function resetPasswordWithOtp(string $email, string $otp, string $newPassword): void
     {
@@ -107,7 +104,7 @@ class User extends Authenticatable
         }
 
         /** @var \App\Models\Otp|null $otp */
-        $otp = (new Otp())->validateOtp($otp, Otp::TYPE_PASSWORD_RESET);
+        $otp = (new Otp)->validateOtp($otp, Otp::TYPE_PASSWORD_RESET);
 
         if (! $otp) {
             throw new BaseException('Invalid or expired OTP', 403);
@@ -132,7 +129,7 @@ class User extends Authenticatable
             throw new BaseException('User not found', 404);
         }
 
-        $otp = (new Otp())->createOtpByUser($user->id, Otp::TYPE_PASSWORD_RESET);
+        $otp = (new Otp)->createOtpByUser($user->id, Otp::TYPE_PASSWORD_RESET);
 
         $data = new stdClass;
         $data->user = $user;
@@ -170,11 +167,12 @@ class User extends Authenticatable
         $permissions = [];
         /** @var \App\Models\Role $role */
         foreach ($roles as $role) {
-            /**  @var \App\Models\Permission $permission */
+            /** @var \App\Models\Permission $permission */
             foreach ($role->permissions as $permission) {
                 $permissions[] = $permission->name;
             }
         }
+
         return array_values(array_unique($permissions));
     }
 }

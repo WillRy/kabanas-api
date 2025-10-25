@@ -33,10 +33,9 @@ class AuthController extends Controller
         /** @var \App\Models\User $user */
         $user = Auth::user();
 
-
         $token = $user->createToken('auth_token')->plainTextToken;
 
-        $useCookie = !empty($request->query('cookie'));
+        $useCookie = ! empty($request->query('cookie'));
 
         $tokens = (new JwtService($useCookie))->doAuth($user->id);
 
@@ -69,7 +68,7 @@ class AuthController extends Controller
     public function logout(Request $request): Response
     {
 
-        if (Auth::guard("sanctum")->check() && $request->user()->currentAccessToken()) {
+        if (Auth::guard('sanctum')->check() && $request->user()->currentAccessToken()) {
             /** @var \App\Models\User $user */
             $user = $request->user();
 
@@ -79,13 +78,11 @@ class AuthController extends Controller
             $token->delete();
         }
 
-        Auth::guard("web")->logout();
+        Auth::guard('web')->logout();
 
-
-        if (Auth::guard("api")->check()) {
+        if (Auth::guard('api')->check()) {
             (new JwtService)->logoutTokens();
         }
-
 
         return response()->noContent();
     }

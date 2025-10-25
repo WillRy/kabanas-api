@@ -17,14 +17,14 @@ class PropertyControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function testIfPropertyCreationFailsIfUnauthenticated(): void
+    public function test_if_property_creation_fails_if_unauthenticated(): void
     {
         $response = $this->postJson('/api/property');
 
         $response->assertStatus(401);
     }
 
-    public function testIfPropertyCreationFailsIfNotAdmin(): void
+    public function test_if_property_creation_fails_if_not_admin(): void
     {
         $this->seed();
 
@@ -37,16 +37,14 @@ class PropertyControllerTest extends TestCase
             'maxCapacity' => 10,
             'regularPrice' => 100.00,
             'discount' => 10,
-            'description' => "Random description",
+            'description' => 'Random description',
             'image' => null,
         ]);
 
         $response->assertStatus(403);
     }
 
-
-
-    public function testIfPropertiesCanBeListed(): void
+    public function test_if_properties_can_be_listed(): void
     {
         $this->seed();
 
@@ -111,7 +109,63 @@ class PropertyControllerTest extends TestCase
         $this->assertFalse($responseData[0]['discount'] < $responseData[1]['discount']);
     }
 
-    public function testIfValidatonWorks(): void
+    public function test_if_property_autocomplete_fails_with_unauthenticated_user(): void
+    {
+        $response = $this->getJson('/api/property/autocomplete');
+
+        $response->assertStatus(401);
+    }
+
+    public function test_if_property_autocomplete_fails_with_unauthorized_user(): void
+    {
+        $this->seed();
+
+        $user = User::factory(1)->create()->first();
+
+        $this->actingAs($user);
+
+        $response = $this->getJson('/api/property/autocomplete');
+
+        $response->assertStatus(403);
+    }
+
+    public function test_if_property_autocomplete_works(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        Property::factory()->create([
+            'name' => 'Alpha Cabin 1',
+        ]);
+
+        $response = $this->getJson('/api/property/autocomplete?search=alpha');
+
+        $response->assertStatus(200);
+        $response->assertJson(function (AssertableJson $json) {
+            $json
+                ->has('data')
+                ->whereAllType([
+                    'data.0.id' => 'integer',
+                    'data.0.name' => 'string',
+                    'data.0.maxCapacity' => 'integer',
+                    'data.0.regularPrice' => 'integer|double',
+                    'data.0.discount' => 'integer|double|null',
+                    'data.0.description' => 'string',
+                    'data.0.image' => 'string|null',
+                    'data.0.created_at' => 'string',
+                    'data.0.updated_at' => 'string',
+                ])
+                ->etc();
+        });
+
+        $data = $response->json('data');
+        foreach ($data as $property) {
+            $this->assertStringContainsStringIgnoringCase('alpha', $property['name']);
+        }
+    }
+
+    public function test_if_validaton_works(): void
     {
         $this->seed();
 
@@ -123,9 +177,8 @@ class PropertyControllerTest extends TestCase
             'regularPrice' => $this->faker->text(300),
             'discount' => $this->faker->text(300),
             'description' => 1000,
-            'image' => "xpto",
+            'image' => 'xpto',
         ]);
-
 
         $response->assertStatus(422);
         $response->assertJsonValidationErrors([
@@ -137,14 +190,13 @@ class PropertyControllerTest extends TestCase
             'image',
         ]);
 
-
         Storage::fake('public');
         $response = $this->postJson('/api/property', [
             'name' => $this->faker->text(30),
             'maxCapacity' => $this->faker->numberBetween(1, 10),
             'regularPrice' => mt_rand(100, 1000),
             'discount' => mt_rand(1100, 1200),
-            'description' => "Random description",
+            'description' => 'Random description',
             'image' => UploadedFile::fake()->image('property.jpg'),
         ]);
 
@@ -154,7 +206,7 @@ class PropertyControllerTest extends TestCase
         ]);
     }
 
-    public function testIfPropertyIsCreatedSuccessfullyWith(): void
+    public function test_if_property_is_created_successfully_with(): void
     {
         $this->seed();
 
@@ -166,12 +218,11 @@ class PropertyControllerTest extends TestCase
             'maxCapacity' => $this->faker->numberBetween(1, 10),
             'regularPrice' => mt_rand(100, 1000),
             'discount' => mt_rand(1, 50),
-            'description' => "Random description",
+            'description' => 'Random description',
             'image' => UploadedFile::fake()->image('property.jpg'),
         ]);
 
         $response->assertStatus(201);
-
 
         $response->assertJson(function (AssertableJson $json) {
             $json->whereAllType([
@@ -197,7 +248,7 @@ class PropertyControllerTest extends TestCase
         ]);
     }
 
-    public function testIfPropertyCanBeDeleted(): void
+    public function test_if_property_can_be_deleted(): void
     {
         $this->seed();
 
@@ -213,7 +264,7 @@ class PropertyControllerTest extends TestCase
         ]);
     }
 
-    public function testIfUpdateFailsIfNotAdmin(): void
+    public function test_if_update_fails_if_not_admin(): void
     {
         $this->seed();
 
@@ -228,14 +279,14 @@ class PropertyControllerTest extends TestCase
             'maxCapacity' => 20,
             'regularPrice' => 200.00,
             'discount' => 20,
-            'description' => "Updated description",
+            'description' => 'Updated description',
             'image' => null,
         ]);
 
         $response->assertStatus(403);
     }
 
-    public function testIfUpdateValidationWorks(): void
+    public function test_if_update_validation_works(): void
     {
         $this->seed();
 
@@ -249,7 +300,7 @@ class PropertyControllerTest extends TestCase
             'regularPrice' => $this->faker->text(300),
             'discount' => $this->faker->text(300),
             'description' => 1000,
-            'image' => "xpto",
+            'image' => 'xpto',
         ]);
 
         $response->assertStatus(422);
@@ -268,7 +319,7 @@ class PropertyControllerTest extends TestCase
             'maxCapacity' => $this->faker->numberBetween(1, 10),
             'regularPrice' => mt_rand(100, 1000),
             'discount' => mt_rand(1100, 1200),
-            'description' => "Random description",
+            'description' => 'Random description',
             'image' => UploadedFile::fake()->image('property.jpg'),
         ]);
 
@@ -278,7 +329,7 @@ class PropertyControllerTest extends TestCase
         ]);
     }
 
-    public function testIfUpdateWorks(): void
+    public function test_if_update_works(): void
     {
         $this->seed();
 
@@ -291,7 +342,7 @@ class PropertyControllerTest extends TestCase
             'maxCapacity' => 20,
             'regularPrice' => 200.50,
             'discount' => 20,
-            'description' => "Updated description",
+            'description' => 'Updated description',
             'image' => null,
         ]);
 
@@ -320,11 +371,11 @@ class PropertyControllerTest extends TestCase
             'maxCapacity' => 20,
             'regularPrice' => 200.50,
             'discount' => 20,
-            'description' => "Updated description",
+            'description' => 'Updated description',
         ]);
     }
 
-    public function testIfUnavailableDatesCanBeFetched(): void
+    public function test_if_unavailable_dates_can_be_fetched(): void
     {
         $this->seed();
 

@@ -5,14 +5,13 @@ namespace Tests\Feature\Models;
 use App\Models\Booking;
 use App\Models\Guest;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class GuestTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIfGuestCanBeCreated()
+    public function test_if_guest_can_be_created()
     {
         $this->seed();
 
@@ -31,7 +30,7 @@ class GuestTest extends TestCase
         ]);
     }
 
-    public function testIfGuestHaveUserRelation()
+    public function test_if_guest_have_user_relation()
     {
         $this->seed();
 
@@ -49,7 +48,7 @@ class GuestTest extends TestCase
         $this->assertEquals($user->id, $guest->user->id);
     }
 
-    public function testIfGuestHaveBookingsRelation()
+    public function test_if_guest_have_bookings_relation()
     {
         $this->seed();
 
@@ -62,5 +61,27 @@ class GuestTest extends TestCase
         $this->assertTrue(method_exists($guest, 'bookings'));
         $this->assertInstanceOf(\Illuminate\Database\Eloquent\Relations\HasMany::class, $guest->bookings());
         $this->assertTrue($guest->bookings->contains($booking));
+    }
+
+    public function test_if_guest_autocomplete_returns_data()
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $guests = \App\Models\Guest::factory(5)->create();
+        $names = $guests->map(function ($guest) {
+            return explode(' ', $guest->user->name)[0];
+        });
+
+        foreach ($names as $name) {
+            $searched = (new Guest)->autocomplete($name);
+
+            $this->assertGreaterThan(0, count($searched));
+
+            foreach ($searched as $guest) {
+                $this->assertStringContainsStringIgnoringCase($name, $guest->name);
+            }
+        }
     }
 }

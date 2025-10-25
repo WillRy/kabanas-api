@@ -41,7 +41,7 @@ class Otp extends Model
         ]);
     }
 
-    public function validateOtp(string $code, string $type): Otp|null
+    public function validateOtp(string $code, string $type): ?Otp
     {
         return Otp::query()
             ->where('code', $code)

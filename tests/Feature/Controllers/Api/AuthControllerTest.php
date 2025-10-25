@@ -3,7 +3,6 @@
 namespace Tests\Feature\Controllers\Api;
 
 use App\Models\Otp;
-use App\Models\User;
 use App\Service\JwtService;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Support\Facades\Mail;
@@ -13,7 +12,7 @@ class AuthControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIfLoginValidationWorks(): void
+    public function test_if_login_validation_works(): void
     {
         $response = $this->postJson('/api/auth/login', [
             'email' => '',
@@ -24,7 +23,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonValidationErrors(['email', 'password']);
     }
 
-    public function testIfLoginFailsWithInvalidCredentials(): void
+    public function test_if_login_fails_with_invalid_credentials(): void
     {
         $this->seed();
 
@@ -37,7 +36,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonFragment(['message' => 'Invalid credentials']);
     }
 
-    public function testIfLoginSucceedsWithValidCredentials(): void
+    public function test_if_login_succeeds_with_valid_credentials(): void
     {
         $this->seed();
 
@@ -54,7 +53,7 @@ class AuthControllerTest extends TestCase
                     'id',
                     'name',
                     'email',
-                    'permissions'
+                    'permissions',
                 ],
                 'access_token',
                 'token_type',
@@ -67,7 +66,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    public function testIfUserEndpointReturnsAuthenticatedUser(): void
+    public function test_if_user_endpoint_returns_authenticated_user(): void
     {
         $this->seed();
 
@@ -86,7 +85,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    public function testIfUserEndpointReturnsErrorWhenNotHaveAuthenticatedUser(): void
+    public function test_if_user_endpoint_returns_error_when_not_have_authenticated_user(): void
     {
 
         $response = $this->getJson('/api/user');
@@ -94,7 +93,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function testIfLogoutWorksWhenAuthenticated(): void
+    public function test_if_logout_works_when_authenticated(): void
     {
         $this->seed();
 
@@ -103,28 +102,28 @@ class AuthControllerTest extends TestCase
         $token = $user->createToken('secrettoken')->plainTextToken;
 
         $response = $this->postJson('/api/logout', [], [
-            'Authorization' => 'Bearer ' . $token
+            'Authorization' => 'Bearer '.$token,
         ]);
 
         $response->assertStatus(204);
         $response->assertNoContent();
 
-        $tokens = (new JwtService())->doAuth($user->id);
+        $tokens = (new JwtService)->doAuth($user->id);
 
         $response = $this->postJson('/api/logout', [], [
-            'Authorization' => 'Bearer ' . $tokens->token
+            'Authorization' => 'Bearer '.$tokens->token,
         ]);
         $response->assertStatus(204);
         $response->assertNoContent();
 
-        $this->actingAs($user, "web");
+        $this->actingAs($user, 'web');
 
         $response = $this->postJson('/api/logout');
         $response->assertStatus(204);
         $response->assertNoContent();
     }
 
-    public function testIfLogoutNotWorksWhenAuthenticated(): void
+    public function test_if_logout_not_works_when_authenticated(): void
     {
 
         $response = $this->postJson('/api/logout');
@@ -132,19 +131,17 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function testIfStartPasswordResetValidationWorks(): void
+    public function test_if_start_password_reset_validation_works(): void
     {
         $response = $this->postJson('/api/auth/start-password-reset', [
             'email' => '',
         ]);
 
-
         $response->assertStatus(422);
         $response->assertJsonValidationErrors(['email']);
     }
 
-
-    public function testIfStartPasswordResetFailsWithWrongUser(): void
+    public function test_if_start_password_reset_fails_with_wrong_user(): void
     {
         $this->seed();
 
@@ -156,7 +153,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonValidationErrors(['email']);
     }
 
-    public function testIfStartPasswordResetWorks(): void
+    public function test_if_start_password_reset_works(): void
     {
         $this->seed();
 
@@ -168,7 +165,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonFragment(['message' => 'Password reset OTP sent to your email']);
     }
 
-    public function testIfPasswordResetValidationWorks(): void
+    public function test_if_password_reset_validation_works(): void
     {
         $response = $this->postJson('/api/auth/password-reset', [
             'email' => '',
@@ -181,7 +178,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonValidationErrors(['email', 'otp', 'password']);
     }
 
-    public function testIfPasswordResetFailsWithWrongEmail(): void
+    public function test_if_password_reset_fails_with_wrong_email(): void
     {
         $response = $this->postJson('/api/auth/start-password-reset', [
             'email' => 'admin@admin.com',
@@ -198,8 +195,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonValidationErrors(['email']);
     }
 
-
-    public function testIfPasswordResetFailsWithWrongOtp(): void
+    public function test_if_password_reset_fails_with_wrong_otp(): void
     {
         $response = $this->postJson('/api/auth/start-password-reset', [
             'email' => 'admin@admin.com',
@@ -216,7 +212,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonValidationErrors(['otp']);
     }
 
-    public function testIfPasswordResetWorks(): void
+    public function test_if_password_reset_works(): void
     {
         $this->seed();
 
@@ -240,7 +236,7 @@ class AuthControllerTest extends TestCase
         $response->assertStatus(200);
     }
 
-    public function testIfRefreshTokenFailsWithInvalidToken(): void
+    public function test_if_refresh_token_fails_with_invalid_token(): void
     {
         $this->seed();
 
@@ -257,7 +253,7 @@ class AuthControllerTest extends TestCase
         $response->assertJsonFragment(['message' => 'Invalid refresh token']);
     }
 
-    public function testIfRefreshTokenWorks(): void
+    public function test_if_refresh_token_works(): void
     {
         $this->seed();
 
@@ -282,7 +278,7 @@ class AuthControllerTest extends TestCase
         ]);
     }
 
-    public function testIfRefreshTokenFailsWithoutToken(): void
+    public function test_if_refresh_token_fails_without_token(): void
     {
         $this->seed();
 

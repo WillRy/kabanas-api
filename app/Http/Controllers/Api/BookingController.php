@@ -3,6 +3,7 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
+use App\Http\Requests\Api\Booking\StoreBookingRequest;
 use App\Http\Resources\Api\Booking\BookingResource;
 use App\Models\Booking;
 use App\Service\ResponseJSON;
@@ -30,7 +31,7 @@ class BookingController extends Controller
     {
         $booking = (new Booking)->details($bookingId);
 
-        if(!$booking) {
+        if (! $booking) {
             return ResponseJSON::getInstance()
                 ->setMessage('Booking not found')
                 ->setStatusCode(404)
@@ -94,6 +95,17 @@ class BookingController extends Controller
 
         return ResponseJSON::getInstance()
             ->setData(BookingResource::collection($bookings))
+            ->render();
+    }
+
+    public function newBooking(StoreBookingRequest $request)
+    {
+        $booking = (new Booking)->createBooking($request->all());
+
+        return ResponseJSON::getInstance()
+            ->setMessage('Booking created successfully')
+            ->setData(new BookingResource($booking))
+            ->setStatusCode(201)
             ->render();
     }
 }

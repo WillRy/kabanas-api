@@ -39,6 +39,17 @@ class PropertyController extends Controller
             ->render();
     }
 
+    public function autocomplete(Request $request)
+    {
+        $properties = (new Property)->autocomplete(
+            $request->query('search'),
+        );
+
+        return ResponseJSON::getInstance()
+            ->setData(PropertyResource::collection($properties))
+            ->render();
+    }
+
     public function update(StorePropertyRequest $request, Property $property)
     {
         $property->updateProperty($request->validated());

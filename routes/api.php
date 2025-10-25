@@ -2,10 +2,10 @@
 
 use App\Http\Controllers\Api\AuthController;
 use App\Http\Controllers\Api\BookingController;
+use App\Http\Controllers\Api\GuestController;
 use App\Http\Controllers\Api\ProfileController;
 use App\Http\Controllers\Api\PropertyController;
 use App\Http\Controllers\Api\SettingController;
-use Illuminate\Cookie\Middleware\EncryptCookies;
 use Illuminate\Support\Facades\Route;
 
 Route::get('/user', [AuthController::class, 'user'])->middleware('auth:api,sanctum,api');
@@ -20,6 +20,9 @@ Route::group(['prefix' => 'auth'], function () {
 
 Route::group(['prefix' => 'property', 'middleware' => ['auth:api,sanctum']], function () {
     Route::get('/', [PropertyController::class, 'index']);
+
+    Route::get('/autocomplete', [PropertyController::class, 'autocomplete']);
+
     Route::post('/', [PropertyController::class, 'store']);
     Route::post('/{property}', [PropertyController::class, 'update']);
     Route::delete('/{property}', [PropertyController::class, 'destroy']);
@@ -29,6 +32,7 @@ Route::group(['prefix' => 'property', 'middleware' => ['auth:api,sanctum']], fun
 
 Route::group(['prefix' => 'bookings', 'middleware' => ['auth:api,sanctum']], function () {
     Route::get('/', [BookingController::class, 'index']);
+    Route::post('/', [BookingController::class, 'newBooking']);
     Route::get('/stats', [BookingController::class, 'stats']);
     Route::get('/today-activity', [BookingController::class, 'todayActivity']);
     Route::get('/{booking}', [BookingController::class, 'view']);
@@ -36,6 +40,10 @@ Route::group(['prefix' => 'bookings', 'middleware' => ['auth:api,sanctum']], fun
     Route::put('/{booking}/check-out', [BookingController::class, 'checkOut']);
     Route::delete('/{booking}', [BookingController::class, 'destroy']);
 
+});
+
+Route::group(['prefix' => 'guest', 'middleware' => ['auth:api,sanctum']], function () {
+    Route::get('/autocomplete', [GuestController::class, 'autocomplete']);
 });
 
 Route::group(['prefix' => 'setting', 'middleware' => ['auth:api,sanctum']], function () {

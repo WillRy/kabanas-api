@@ -28,4 +28,18 @@ class Guest extends Model
     {
         return $this->hasMany(Booking::class);
     }
+
+    public function autocomplete(?string $search = null)
+    {
+        $query = User::query()
+            ->withWhereHas('guestProfile')
+            ->when(! empty($search), function ($query) use ($search) {
+                $query->where('name', 'like', "%{$search}%")
+                    ->orWhere('email', 'like', "%{$search}%");
+            })
+            ->limit(10)
+            ->orderBy('id', 'asc');
+
+        return $query->get();
+    }
 }

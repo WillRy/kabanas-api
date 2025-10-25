@@ -179,8 +179,6 @@ class ResponseJSON
         return $array;
     }
 
-
-
     /**
      * Esconde indices númericos dos arrays, principalmente
      * em agrupamentos de dados

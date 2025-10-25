@@ -28,14 +28,13 @@ class BookingPolicy
         /** @var \App\Models\Guest $guestProfile */
         $guestProfile = $user->guestProfile;
 
-         /** @var \App\Models\Guest $bookingGuest */
+        /** @var \App\Models\Guest $bookingGuest */
         $bookingGuest = $booking->guest;
 
         $isOwner = $guestProfile && $guestProfile->id === $bookingGuest->id;
 
         return $canSeeAll || $isOwner;
     }
-
 
     public function checkIn(User $user, Booking $booking): bool
     {
@@ -68,4 +67,10 @@ class BookingPolicy
         return in_array('manage-bookings', $permissions, true);
     }
 
+    public function create(User $user): bool
+    {
+        $permissions = $user->userPermissions();
+
+        return in_array('manage-bookings', $permissions, true);
+    }
 }

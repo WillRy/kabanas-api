@@ -7,7 +7,6 @@ use App\Models\Property;
 use App\Models\User;
 use Carbon\Carbon;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Storage;
 use Tests\TestCase;
@@ -16,7 +15,7 @@ class PropertyTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIfAuthorizedUserCanCreateProperty()
+    public function test_if_authorized_user_can_create_property()
     {
         $this->seed();
 
@@ -32,7 +31,7 @@ class PropertyTest extends TestCase
             'image' => UploadedFile::fake()->image('property.jpg'),
         ];
 
-        $property = (new Property())->newProperty($createdData);
+        $property = (new Property)->newProperty($createdData);
 
         $this->assertDatabaseHas('properties', [
             'id' => $property->id,
@@ -41,11 +40,11 @@ class PropertyTest extends TestCase
         ]);
     }
 
-    public function testIfAuthorizedUserCannotCreateProperty()
+    public function test_if_authorized_user_cannot_create_property()
     {
         $this->seed();
 
-        $user = (new User())->factory(1)->create()->first();
+        $user = (new User)->factory(1)->create()->first();
 
         $this->actingAs($user);
 
@@ -59,19 +58,17 @@ class PropertyTest extends TestCase
             'image' => UploadedFile::fake()->image('property.jpg'),
         ];
 
-
         $this->expectException(\Illuminate\Auth\Access\AuthorizationException::class);
-        (new Property())->newProperty($createdData);
+        (new Property)->newProperty($createdData);
     }
 
-    public function testIfAuthorizedUserCanAccessPropertyList()
+    public function test_if_authorized_user_can_access_property_list()
     {
         $this->seed();
 
         $this->actingAsAdmin();
 
-
-        $properties = (new Property())->list();
+        $properties = (new Property)->list();
 
         $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $properties);
         $this->assertGreaterThan(0, $properties->total());
@@ -83,42 +80,41 @@ class PropertyTest extends TestCase
             return 2;
         });
 
-        $propertiesPage2 = (new Property())->list();
+        $propertiesPage2 = (new Property)->list();
 
         $this->assertInstanceOf(\Illuminate\Pagination\LengthAwarePaginator::class, $propertiesPage2);
         $this->assertEquals(2, $propertiesPage2->currentPage());
         $this->assertGreaterThan(0, count($propertiesPage2->items()));
     }
 
-    public function testIfListPropertiesFiltersIsWorking()
+    public function test_if_list_properties_filters_is_working()
     {
         $this->seed();
 
         $this->actingAsAdmin();
 
-
-        $properties = (new Property())->list('id', 'desc', null);
+        $properties = (new Property)->list('id', 'desc', null);
         $this->assertCount(10, $properties->items());
         $this->assertGreaterThanOrEqual($properties->items()[1]->id, $properties->items()[0]->id);
 
-        $properties = (new Property())->list('id', 'asc', null);
+        $properties = (new Property)->list('id', 'asc', null);
         $this->assertCount(10, $properties->items());
         $this->assertGreaterThanOrEqual($properties->items()[0]->id, $properties->items()[1]->id);
 
-        $properties = (new Property())->list('id', 'asc', 'with-discount');
+        $properties = (new Property)->list('id', 'asc', 'with-discount');
         $discounts = array_filter($properties->items(), function ($property) {
             return $property->discount !== null;
         });
         $this->assertEquals(count($properties->items()), count($discounts));
 
-        $properties = (new Property())->list('id', 'asc', 'without-discount');
+        $properties = (new Property)->list('id', 'asc', 'without-discount');
         $withoutDiscounts = array_filter($properties->items(), function ($property) {
             return $property->discount == null;
         });
         $this->assertEquals(count($properties->items()), count($withoutDiscounts));
     }
 
-    public function testIfUnauthorizedUserCannotAccessPropertyList()
+    public function test_if_unauthorized_user_cannot_access_property_list()
     {
         $this->seed();
 
@@ -127,10 +123,10 @@ class PropertyTest extends TestCase
         $this->actingAs($user);
 
         $this->expectException(\Illuminate\Auth\Access\AuthorizationException::class);
-        (new Property())->list();
+        (new Property)->list();
     }
 
-    public function testIfAuthorizedUserCanUpdateProperty()
+    public function test_if_authorized_user_can_update_property()
     {
         $this->seed();
 
@@ -157,7 +153,7 @@ class PropertyTest extends TestCase
         ]);
     }
 
-    public function testIfUnauthorizedUserCannotUpdateProperty()
+    public function test_if_unauthorized_user_cannot_update_property()
     {
         $this->seed();
 
@@ -182,7 +178,7 @@ class PropertyTest extends TestCase
         $property->updateProperty($updateProperty);
     }
 
-    public function testIfAuthorizedUserCanDeleteProperty()
+    public function test_if_authorized_user_can_delete_property()
     {
         $this->seed();
 
@@ -197,7 +193,7 @@ class PropertyTest extends TestCase
         ]);
     }
 
-    public function testIfUnauthorizedUserCannotDeleteProperty()
+    public function test_if_unauthorized_user_cannot_delete_property()
     {
         $this->seed();
 
@@ -211,7 +207,7 @@ class PropertyTest extends TestCase
         $property->deleteProperty();
     }
 
-    public function testIfCanGetUnavailableDates()
+    public function test_if_can_get_unavailable_dates()
     {
         $this->seed();
 
@@ -238,5 +234,27 @@ class PropertyTest extends TestCase
             $periodDays,
             $unavailableDates
         );
+    }
+
+    public function test_if_property_autocomplete_returns_data()
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        Property::factory()->create([
+            'name' => 'Alpha Cabin 1',
+        ]);
+        Property::factory()->create([
+            'name' => 'Alpha Cabin 2',
+        ]);
+
+        $properties = (new Property)->autocomplete('Alpha');
+
+        $this->assertGreaterThan(0, count($properties));
+
+        foreach ($properties as $property) {
+            $this->assertStringContainsString('Alpha', $property->name);
+        }
     }
 }

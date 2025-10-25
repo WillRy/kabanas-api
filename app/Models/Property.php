@@ -2,11 +2,8 @@
 
 namespace App\Models;
 
-use App\Policies\PropertyPolicy;
-use Illuminate\Database\Eloquent\Attributes\UsePolicy;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
-use Illuminate\Database\Eloquent\Relations\HasMany;
 use Illuminate\Database\Eloquent\SoftDeletes;
 use Illuminate\Support\Facades\Gate;
 
@@ -29,11 +26,6 @@ class Property extends Model
         'discount' => 'float',
         'maxCapacity' => 'integer',
     ];
-
-    public function bookings(): HasMany
-    {
-        return $this->hasMany(Booking::class);
-    }
 
     public function newProperty(array $attributes = [])
     {
@@ -72,6 +64,19 @@ class Property extends Model
             ->paginate(10);
     }
 
+    public function autocomplete(?string $search = null)
+    {
+        Gate::authorize('viewAny', Property::class);
+
+        return Property::query()
+            ->when($search, function ($query) use ($search) {
+                $query->where('name', 'like', '%'.$search.'%');
+            })
+            ->orderBy('name', 'asc')
+            ->limit(10)
+            ->get();
+    }
+
     public function updateProperty(array $attributes = [])
     {
         Gate::authorize('update', $this);
@@ -97,7 +102,7 @@ class Property extends Model
     public function getUnavailableDates(int $propertyId)
     {
         $bookings = Booking::query()
-            ->where("startDate", '>=', now()->format('Y-m-d'))
+            ->where('startDate', '>=', now()->format('Y-m-d'))
             ->where('property_id', $propertyId)
             ->orderBy('startDate')
             ->get();

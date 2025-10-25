@@ -16,6 +16,7 @@ class SettingController extends Controller
     {
 
         $setting = (new Setting)->getSettings();
+
         return ResponseJSON::getInstance()
             ->setData(new SettingResource($setting))
             ->render();

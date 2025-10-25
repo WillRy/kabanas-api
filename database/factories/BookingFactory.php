@@ -20,8 +20,8 @@ class BookingFactory extends Factory
 
         $settings = \App\Models\Setting::first();
 
-        if (!$settings) {
-            $settings = (new \App\Models\Setting())->initializeSettings();
+        if (! $settings) {
+            $settings = (new \App\Models\Setting)->initializeSettings();
         }
 
         return [

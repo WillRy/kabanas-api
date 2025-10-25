@@ -7,7 +7,6 @@ use Illuminate\Support\Facades\Cookie;
 use Illuminate\Support\Facades\DB;
 use Illuminate\Support\Facades\Request;
 use Illuminate\Support\Str;
-use PHPOpenSourceSaver\JWTAuth\JWTGuard;
 use stdClass;
 
 class JwtService
@@ -133,7 +132,7 @@ class JwtService
     ): bool {
         $payload = $this->payloadToken($token);
 
-        if(empty($payload->session_id)) {
+        if (empty($payload->session_id)) {
             return false;
         }
 
@@ -270,7 +269,7 @@ class JwtService
      */
     public function logoutTokens(): void
     {
-        Auth::guard("api")->logout();
+        Auth::guard('api')->logout();
 
         $token = Request::bearerToken() ?? Cookie::get('token');
 

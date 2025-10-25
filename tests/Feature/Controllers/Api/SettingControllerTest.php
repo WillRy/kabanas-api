@@ -5,7 +5,6 @@ namespace Tests\Feature\Controllers\Api;
 use App\Models\Setting;
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
 use Tests\TestCase;
 
@@ -13,7 +12,7 @@ class SettingControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIfSettingsCanBeFetched(): void
+    public function test_if_settings_can_be_fetched(): void
     {
         $this->seed();
 
@@ -47,7 +46,7 @@ class SettingControllerTest extends TestCase
         });
     }
 
-    public function testIfSettingsCanBeUpdated(): void
+    public function test_if_settings_can_be_updated(): void
     {
         $this->seed();
 
@@ -78,7 +77,7 @@ class SettingControllerTest extends TestCase
         ]);
     }
 
-    public function testIfSettingsCanBeUpdatedWithoutDefaultSettingsExists(): void
+    public function test_if_settings_can_be_updated_without_default_settings_exists(): void
     {
         $this->seed();
 
@@ -111,7 +110,7 @@ class SettingControllerTest extends TestCase
         ]);
     }
 
-    public function testIfSettingsCannotBeUpdatedByNotAuthenticatedUsers(): void
+    public function test_if_settings_cannot_be_updated_by_not_authenticated_users(): void
     {
         $this->seed();
 
@@ -125,7 +124,7 @@ class SettingControllerTest extends TestCase
         $response->assertStatus(401);
     }
 
-    public function testIfSettingsCannotBeUpdatedByNotUnauthorizedUser(): void
+    public function test_if_settings_cannot_be_updated_by_not_unauthorized_user(): void
     {
         $this->seed();
 

@@ -2,7 +2,6 @@
 
 namespace App\Models;
 
-use Hamcrest\Core\Set;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Support\Facades\Gate;
@@ -54,7 +53,6 @@ class Setting extends Model
         if ($alreadyExists) {
             return $alreadyExists;
         }
-
 
         $settings = new self($this->defaultSettings);
 

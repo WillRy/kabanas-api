@@ -34,9 +34,9 @@ class UserFactory extends Factory
 
     public function createAdminUser(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'name' => 'Admin User',
-            'email' => 'admin@admin.com'
+            'email' => 'admin@admin.com',
         ]);
     }
 
@@ -45,7 +45,7 @@ class UserFactory extends Factory
      */
     public function unverified(): static
     {
-        return $this->state(fn(array $attributes) => [
+        return $this->state(fn (array $attributes) => [
             'email_verified_at' => null,
         ]);
     }

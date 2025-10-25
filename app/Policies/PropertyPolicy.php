@@ -46,6 +46,4 @@ class PropertyPolicy
 
         return in_array('manage-properties', $permissions, true);
     }
-
-
 }

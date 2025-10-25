@@ -7,9 +7,9 @@ use PHPUnit\Framework\TestCase;
 
 class BookingTest extends TestCase
 {
-    public function testIfModelHasExpectedFillables()
+    public function test_if_model_has_expected_fillables()
     {
-        $booking = new Booking();
+        $booking = new Booking;
         $expected = [
             'startDate',
             'endDate',
@@ -29,10 +29,12 @@ class BookingTest extends TestCase
         $this->assertEqualsCanonicalizing($expected, $booking->getFillable());
     }
 
-    public function testIfModelHasExpectedCasts()
+    public function test_if_model_has_expected_casts()
     {
-        $booking = new Booking();
+        $booking = new Booking;
         $expected = [
+            'numNights' => 'integer',
+            'numGuests' => 'integer',
             'startDate' => 'datetime',
             'endDate' => 'datetime',
             'propertyPrice' => 'float',

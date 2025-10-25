@@ -2,12 +2,12 @@
 <html lang="en">
  <head>
   <meta charset="UTF-8">
-  <title>Dashboard for /var/www/app/Policies</title>
+  <title>Dashboard for /var/www/app/Http/Requests/Api/Booking</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <link href="../_css/bootstrap.min.css?v=11.0.11" rel="stylesheet" type="text/css">
-  <link href="../_css/nv.d3.min.css?v=11.0.11" rel="stylesheet" type="text/css">
-  <link href="../_css/style.css?v=11.0.11" rel="stylesheet" type="text/css">
-  <link href="../_css/custom.css" rel="stylesheet" type="text/css">
+  <link href="../../../../_css/bootstrap.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../../../../_css/nv.d3.min.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../../../../_css/style.css?v=11.0.11" rel="stylesheet" type="text/css">
+  <link href="../../../../_css/custom.css" rel="stylesheet" type="text/css">
  </head>
  <body>
   <header>
@@ -16,8 +16,11 @@
      <div class="col-md-12">
       <nav aria-label="breadcrumb">
        <ol class="breadcrumb">
-         <li class="breadcrumb-item"><a href="../index.html">/var/www/app</a></li>
-         <li class="breadcrumb-item"><a href="index.html">Policies</a></li>
+         <li class="breadcrumb-item"><a href="../../../../index.html">/var/www/app</a></li>
+         <li class="breadcrumb-item"><a href="../../../index.html">Http</a></li>
+         <li class="breadcrumb-item"><a href="../../index.html">Requests</a></li>
+         <li class="breadcrumb-item"><a href="../index.html">Api</a></li>
+         <li class="breadcrumb-item"><a href="index.html">Booking</a></li>
          <li class="breadcrumb-item active">(Dashboard)</li>
 
        </ol>
@@ -140,9 +143,9 @@
     </p>
    </footer>
   </div>
-  <script src="../_js/jquery.min.js?v=11.0.11" type="text/javascript"></script>
-  <script src="../_js/d3.min.js?v=11.0.11" type="text/javascript"></script>
-  <script src="../_js/nv.d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../../../../_js/jquery.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../../../../_js/d3.min.js?v=11.0.11" type="text/javascript"></script>
+  <script src="../../../../_js/nv.d3.min.js?v=11.0.11" type="text/javascript"></script>
   <script type="text/javascript">
 $(document).ready(function() {
   nv.addGraph(function() {
@@ -155,7 +158,7 @@ $(document).ready(function() {
       .yAxis.tickFormat(d3.format('d'));
 
     d3.select('#classCoverageDistribution svg')
-      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,0,3], "Class Coverage"))
+      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,0,1], "Class Coverage"))
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -173,7 +176,7 @@ $(document).ready(function() {
       .yAxis.tickFormat(d3.format('d'));
 
     d3.select('#methodCoverageDistribution svg')
-      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,0,12], "Method Coverage"))
+      .datum(getCoverageDistributionData([0,0,0,0,0,0,0,0,0,0,0,2], "Method Coverage"))
       .transition().duration(500).call(chart);
 
     nv.utils.windowResize(chart.update);
@@ -223,7 +226,7 @@ $(document).ready(function() {
     chart.yAxis.axisLabel('Cyclomatic Complexity');
 
     d3.select('#classComplexity svg')
-      .datum(getComplexityData([[100,9,"<a href=\"BookingPolicy.php.html#8\">App\\Policies\\BookingPolicy<\/a>"],[100,4,"<a href=\"PropertyPolicy.php.html#8\">App\\Policies\\PropertyPolicy<\/a>"],[100,1,"<a href=\"SettingPolicy.php.html#8\">App\\Policies\\SettingPolicy<\/a>"]], 'Class Complexity'))
+      .datum(getComplexityData([[100,2,"<a href=\"StoreBookingRequest.php.html#9\">App\\Http\\Requests\\Api\\Booking\\StoreBookingRequest<\/a>"]], 'Class Complexity'))
       .transition()
       .duration(500)
       .call(chart);
@@ -247,7 +250,7 @@ $(document).ready(function() {
     chart.yAxis.axisLabel('Method Complexity');
 
     d3.select('#methodComplexity svg')
-      .datum(getComplexityData([[100,1,"<a href=\"BookingPolicy.php.html#13\">App\\Policies\\BookingPolicy::viewAny<\/a>"],[100,3,"<a href=\"BookingPolicy.php.html#23\">App\\Policies\\BookingPolicy::view<\/a>"],[100,1,"<a href=\"BookingPolicy.php.html#40\">App\\Policies\\BookingPolicy::checkIn<\/a>"],[100,1,"<a href=\"BookingPolicy.php.html#47\">App\\Policies\\BookingPolicy::stats<\/a>"],[100,1,"<a href=\"BookingPolicy.php.html#54\">App\\Policies\\BookingPolicy::checkOut<\/a>"],[100,1,"<a href=\"BookingPolicy.php.html#64\">App\\Policies\\BookingPolicy::delete<\/a>"],[100,1,"<a href=\"BookingPolicy.php.html#71\">App\\Policies\\BookingPolicy::create<\/a>"],[100,1,"<a href=\"PropertyPolicy.php.html#13\">App\\Policies\\PropertyPolicy::viewAny<\/a>"],[100,1,"<a href=\"PropertyPolicy.php.html#23\">App\\Policies\\PropertyPolicy::create<\/a>"],[100,1,"<a href=\"PropertyPolicy.php.html#33\">App\\Policies\\PropertyPolicy::update<\/a>"],[100,1,"<a href=\"PropertyPolicy.php.html#43\">App\\Policies\\PropertyPolicy::delete<\/a>"],[100,1,"<a href=\"SettingPolicy.php.html#12\">App\\Policies\\SettingPolicy::update<\/a>"]], 'Method Complexity'))
+      .datum(getComplexityData([[100,1,"<a href=\"StoreBookingRequest.php.html#14\">App\\Http\\Requests\\Api\\Booking\\StoreBookingRequest::authorize<\/a>"],[100,1,"<a href=\"StoreBookingRequest.php.html#24\">App\\Http\\Requests\\Api\\Booking\\StoreBookingRequest::rules<\/a>"]], 'Method Complexity'))
       .transition()
       .duration(500)
       .call(chart);

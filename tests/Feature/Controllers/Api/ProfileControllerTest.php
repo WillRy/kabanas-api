@@ -4,7 +4,6 @@ namespace Tests\Feature\Controllers\Api;
 
 use App\Models\User;
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Http\UploadedFile;
 use Illuminate\Support\Facades\Hash;
 use Illuminate\Support\Facades\Storage;
@@ -14,7 +13,7 @@ class ProfileControllerTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testIfProfileUpdateValidationWorks(): void
+    public function test_if_profile_update_validation_works(): void
     {
         $this->seed();
 
@@ -33,7 +32,7 @@ class ProfileControllerTest extends TestCase
         $response->assertJsonValidationErrors(['name', 'email', 'password', 'avatar']);
     }
 
-    public function testIfProfileIsUpdatedSuccessfully(): void
+    public function test_if_profile_is_updated_successfully(): void
     {
         $this->seed();
 
@@ -44,9 +43,9 @@ class ProfileControllerTest extends TestCase
         Storage::fake('public');
         $response = $this->postJson('/api/profile', [
             'name' => 'Updated Name',
-            'email' => "admin2@admin.com",
+            'email' => 'admin2@admin.com',
             'password' => 'newsecurepassword',
-            "password_confirmation" => 'newsecurepassword',
+            'password_confirmation' => 'newsecurepassword',
             'avatar' => UploadedFile::fake()->image('avatar.jpg'),
         ]);
 
@@ -57,7 +56,7 @@ class ProfileControllerTest extends TestCase
                 'name',
                 'email',
                 'avatar',
-                'permissions'
+                'permissions',
             ],
         ]);
 
@@ -68,7 +67,7 @@ class ProfileControllerTest extends TestCase
         $this->assertDatabaseHas('users', [
             'id' => $user->id,
             'name' => 'Updated Name',
-            'email' => "admin2@admin.com"
+            'email' => 'admin2@admin.com',
         ]);
 
     }

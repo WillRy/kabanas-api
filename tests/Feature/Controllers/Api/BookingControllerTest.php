@@ -2,7 +2,8 @@
 
 namespace Tests\Feature\Controllers\Api;
 
-
+use App\Models\Guest;
+use App\Models\Property;
 use Illuminate\Foundation\Testing\RefreshDatabase;
 use Illuminate\Foundation\Testing\WithFaker;
 use Illuminate\Testing\Fluent\AssertableJson;
@@ -12,14 +13,14 @@ class BookingControllerTest extends TestCase
 {
     use RefreshDatabase, WithFaker;
 
-    public function testIfListBookingsFailsIfUnauthenticated(): void
+    public function test_if_list_bookings_fails_if_unauthenticated(): void
     {
         $response = $this->getJson('/api/bookings');
 
         $response->assertStatus(401);
     }
 
-    public function testIfListBookingsFailsInUnauthorizedUser(): void
+    public function test_if_list_bookings_fails_in_unauthorized_user(): void
     {
         $this->seed();
 
@@ -32,8 +33,7 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-
-    public function testIfListBookingsWorksForAdmin(): void
+    public function test_if_list_bookings_works_for_admin(): void
     {
         $this->seed();
 
@@ -41,7 +41,7 @@ class BookingControllerTest extends TestCase
 
         $response = $this->getJson('/api/bookings');
         $response->assertStatus(200);
-        $response->assertJson(function(AssertableJson $json) {
+        $response->assertJson(function (AssertableJson $json) {
             $json
                 ->has('success')
                 ->has('message')
@@ -75,7 +75,6 @@ class BookingControllerTest extends TestCase
                 ])
                 ->etc();
         });
-
 
         $response = $this->getJson('/api/bookings');
         $response->assertStatus(200);
@@ -120,7 +119,7 @@ class BookingControllerTest extends TestCase
         $this->assertFalse($data[0]['totalPrice'] < $data[1]['totalPrice']);
     }
 
-    public function testIfCannotViewBookingWithUnauthorizedUser(): void
+    public function test_if_cannot_view_booking_with_unauthorized_user(): void
     {
         $this->seed();
 
@@ -130,13 +129,12 @@ class BookingControllerTest extends TestCase
 
         $booking = \App\Models\Booking::first();
 
-        $response = $this->getJson('/api/bookings/' . $booking->id);
+        $response = $this->getJson('/api/bookings/'.$booking->id);
 
         $response->assertStatus(403);
     }
 
-
-    public function testIfViewBookingFailsWithInexistentBooking(): void
+    public function test_if_view_booking_fails_with_inexistent_booking(): void
     {
         $this->seed();
 
@@ -148,7 +146,7 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(404);
     }
 
-    public function testIfViewBookingWorksWithExistentBooking(): void
+    public function test_if_view_booking_works_with_existent_booking(): void
     {
         $this->seed();
 
@@ -156,10 +154,10 @@ class BookingControllerTest extends TestCase
 
         $booking = \App\Models\Booking::first();
 
-        $response = $this->getJson('/api/bookings/' . $booking->id);
+        $response = $this->getJson('/api/bookings/'.$booking->id);
 
         $response->assertStatus(200);
-        $response->assertJson(function(AssertableJson $json) {
+        $response->assertJson(function (AssertableJson $json) {
             $json
                 ->has('success')
                 ->has('message')
@@ -168,13 +166,13 @@ class BookingControllerTest extends TestCase
                 ->whereType('data.endDate', 'string')
                 ->whereType('data.numNights', 'integer')
                 ->whereType('data.numGuests', 'integer')
-                ->whereType('data.propertyPrice', "integer|double")
-                ->whereType('data.extrasPrice', "integer|double|null")
-                ->whereType('data.totalPrice', "integer|double")
+                ->whereType('data.propertyPrice', 'integer|double')
+                ->whereType('data.extrasPrice', 'integer|double|null')
+                ->whereType('data.totalPrice', 'integer|double')
                 ->whereType('data.status', 'string')
                 ->whereType('data.isPaid', 'boolean')
                 ->whereType('data.hasBreakfast', 'boolean')
-                ->whereType('data.observations', "string|null")
+                ->whereType('data.observations', 'string|null')
                 ->whereType('data.guest', 'array')
                 ->whereType('data.guest.id', 'integer')
                 ->whereType('data.guest.name', 'string')
@@ -184,21 +182,21 @@ class BookingControllerTest extends TestCase
                 ->whereType('data.property.name', 'string')
                 ->whereType('data.property.maxCapacity', 'integer')
                 ->whereType('data.property.regularPrice', 'double')
-                ->whereType('data.property.discount', "integer|double|null")
+                ->whereType('data.property.discount', 'integer|double|null')
                 ->whereType('data.property.description', 'string')
-                ->whereType('data.property.image', "string|null")
+                ->whereType('data.property.image', 'string|null')
                 ->etc();
         });
     }
 
-    public function testIfCheckinFailsIfUnauthenticated(): void
+    public function test_if_checkin_fails_if_unauthenticated(): void
     {
         $response = $this->putJson('/api/bookings/1/check-in');
 
         $response->assertStatus(401);
     }
 
-    public function testIfCheckinFailsInUnauthorizedUser(): void
+    public function test_if_checkin_fails_in_unauthorized_user(): void
     {
         $this->seed();
 
@@ -211,7 +209,7 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testIfCheckinFailsWithDifferentStatusThanUnconfirmed(): void
+    public function test_if_checkin_fails_with_different_status_than_unconfirmed(): void
     {
         $this->seed();
 
@@ -219,22 +217,21 @@ class BookingControllerTest extends TestCase
 
         $booking = \App\Models\Booking::where('status', '!=', 'unconfirmed')->first();
 
-        $response = $this->putJson('/api/bookings/' . $booking->id . '/check-in');
+        $response = $this->putJson('/api/bookings/'.$booking->id.'/check-in');
         $response->assertStatus(422);
     }
 
-    public function testIfCheckinFailsWithInexistentBooking(): void
+    public function test_if_checkin_fails_with_inexistent_booking(): void
     {
         $this->seed();
 
         $this->actingAsAdmin();
 
-
         $response = $this->putJson('/api/bookings/9999999999/check-in');
         $response->assertStatus(404);
     }
 
-    public function testIfCheckinWorksWithValidData(): void
+    public function test_if_checkin_works_with_valid_data(): void
     {
         $this->seed();
 
@@ -242,7 +239,7 @@ class BookingControllerTest extends TestCase
 
         $booking = \App\Models\Booking::where('status', '=', 'unconfirmed')->first();
 
-        $response = $this->putJson('/api/bookings/' . $booking->id . '/check-in');
+        $response = $this->putJson('/api/bookings/'.$booking->id.'/check-in');
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('bookings', [
@@ -251,14 +248,14 @@ class BookingControllerTest extends TestCase
         ]);
     }
 
-    public function testIfCheckoutFailsIfUnauthenticated(): void
+    public function test_if_checkout_fails_if_unauthenticated(): void
     {
         $response = $this->putJson('/api/bookings/1/check-out');
 
         $response->assertStatus(401);
     }
 
-    public function testIfCheckoutFailsInUnauthorizedUser(): void
+    public function test_if_checkout_fails_in_unauthorized_user(): void
     {
         $this->seed();
 
@@ -271,7 +268,7 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testIfCheckoutFailsWithDifferentStatusThanCheckedIn(): void
+    public function test_if_checkout_fails_with_different_status_than_checked_in(): void
     {
         $this->seed();
 
@@ -279,11 +276,11 @@ class BookingControllerTest extends TestCase
 
         $booking = \App\Models\Booking::where('status', '!=', 'checked-in')->first();
 
-        $response = $this->putJson('/api/bookings/' . $booking->id . '/check-out');
+        $response = $this->putJson('/api/bookings/'.$booking->id.'/check-out');
         $response->assertStatus(422);
     }
 
-    public function testIfCheckoutWorksWithValidData(): void
+    public function test_if_checkout_works_with_valid_data(): void
     {
         $this->seed();
 
@@ -291,7 +288,7 @@ class BookingControllerTest extends TestCase
 
         $booking = \App\Models\Booking::where('status', '=', 'checked-in')->first();
 
-        $response = $this->putJson('/api/bookings/' . $booking->id . '/check-out', []);
+        $response = $this->putJson('/api/bookings/'.$booking->id.'/check-out', []);
         $response->assertStatus(200);
 
         $this->assertDatabaseHas('bookings', [
@@ -300,7 +297,7 @@ class BookingControllerTest extends TestCase
         ]);
     }
 
-    public function testIfBookingStatsFailsInUnauthorizedUser(): void
+    public function test_if_booking_stats_fails_in_unauthorized_user(): void
     {
         $this->seed();
 
@@ -313,7 +310,7 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testIfBookingStatsWorksForAdmin(): void
+    public function test_if_booking_stats_works_for_admin(): void
     {
         $this->seed();
 
@@ -324,16 +321,16 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(200);
         $response->assertJson(function (AssertableJson $json) {
             $json->whereType('data.numBookings', 'integer')
-                ->whereType('data.sales', "integer|double")
-                ->whereType('data.occupancyRate', "integer|double")
+                ->whereType('data.sales', 'integer|double')
+                ->whereType('data.occupancyRate', 'integer|double')
                 ->whereType('data.confirmedStaysCount', 'integer')
                 ->whereType('data.confirmedStays', 'array')
                 ->whereType('data.confirmedStays.0.id', 'integer')
                 ->whereType('data.confirmedStays.0.startDate', 'string')
                 ->whereType('data.confirmedStays.0.endDate', 'string')
                 ->whereType('data.confirmedStays.0.numNights', 'integer')
-                ->whereType('data.confirmedStays.0.totalPrice', "integer|double|null")
-                ->whereType('data.confirmedStays.0.extrasPrice', "integer|double|null")
+                ->whereType('data.confirmedStays.0.totalPrice', 'integer|double|null')
+                ->whereType('data.confirmedStays.0.extrasPrice', 'integer|double|null')
                 ->whereType('data.confirmedStays.0.status', 'string')
                 ->whereType('data.confirmedStays.0.created_at', 'string')
                 ->whereType('data.bookings', 'array')
@@ -341,22 +338,22 @@ class BookingControllerTest extends TestCase
                 ->whereType('data.bookings.0.startDate', 'string')
                 ->whereType('data.bookings.0.endDate', 'string')
                 ->whereType('data.bookings.0.numNights', 'integer')
-                ->whereType('data.bookings.0.totalPrice', "integer|double|null")
-                ->whereType('data.bookings.0.extrasPrice', "integer|double|null")
+                ->whereType('data.bookings.0.totalPrice', 'integer|double|null')
+                ->whereType('data.bookings.0.extrasPrice', 'integer|double|null')
                 ->whereType('data.bookings.0.status', 'string')
                 ->whereType('data.bookings.0.created_at', 'string')
                 ->etc();
         });
     }
 
-    public function testIfDeleteBookingFailsIfUnauthenticated(): void
+    public function test_if_delete_booking_fails_if_unauthenticated(): void
     {
         $response = $this->deleteJson('/api/bookings/1');
 
         $response->assertStatus(401);
     }
 
-    public function testIfDeleteBookingFailsInUnauthorizedUser(): void
+    public function test_if_delete_booking_fails_in_unauthorized_user(): void
     {
         $this->seed();
 
@@ -369,14 +366,14 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testIfDeleteBookingWorksForAdmin(): void
+    public function test_if_delete_booking_works_for_admin(): void
     {
         $this->seed();
 
         $this->actingAsAdmin();
 
         $booking = \App\Models\Booking::first();
-        $response = $this->deleteJson('/api/bookings/' . $booking->id);
+        $response = $this->deleteJson('/api/bookings/'.$booking->id);
         $response->assertStatus(204);
         $response->assertNoContent();
         $this->assertDatabaseMissing('bookings', [
@@ -384,14 +381,14 @@ class BookingControllerTest extends TestCase
         ]);
     }
 
-    public function testIfTodayActivitiesFailsForUnauthenticated(): void
+    public function test_if_today_activities_fails_for_unauthenticated(): void
     {
         $response = $this->getJson('/api/bookings/today-activity');
 
         $response->assertStatus(401);
     }
 
-    public function testIfTodayActivitiesFailsInUnauthorizedUser(): void
+    public function test_if_today_activities_fails_in_unauthorized_user(): void
     {
         $this->seed();
 
@@ -404,7 +401,7 @@ class BookingControllerTest extends TestCase
         $response->assertStatus(403);
     }
 
-    public function testIfTodayActivitiesWorksForAdmin(): void
+    public function test_if_today_activities_works_for_admin(): void
     {
         $this->seed();
 
@@ -420,13 +417,13 @@ class BookingControllerTest extends TestCase
                 ->whereType('data.0.endDate', 'string')
                 ->whereType('data.0.numNights', 'integer')
                 ->whereType('data.0.numGuests', 'integer')
-                ->whereType('data.0.propertyPrice', "integer|double|null")
-                ->whereType('data.0.extrasPrice', "integer|double|null")
-                ->whereType('data.0.totalPrice', "integer|double|null")
+                ->whereType('data.0.propertyPrice', 'integer|double|null')
+                ->whereType('data.0.extrasPrice', 'integer|double|null')
+                ->whereType('data.0.totalPrice', 'integer|double|null')
                 ->whereType('data.0.status', 'string')
                 ->whereType('data.0.isPaid', 'boolean')
                 ->whereType('data.0.hasBreakfast', 'boolean')
-                ->whereType('data.0.observations', "string|null")
+                ->whereType('data.0.observations', 'string|null')
                 ->whereType('data.0.guest', 'array')
                 ->whereType('data.0.guest.id', 'integer')
                 ->whereType('data.0.guest.name', 'string')
@@ -436,10 +433,210 @@ class BookingControllerTest extends TestCase
                 ->whereType('data.0.property.name', 'string')
                 ->whereType('data.0.property.maxCapacity', 'integer')
                 ->whereType('data.0.property.regularPrice', 'double')
-                ->whereType('data.0.property.discount', "integer|double|null")
+                ->whereType('data.0.property.discount', 'integer|double|null')
                 ->whereType('data.0.property.description', 'string')
-                ->whereType('data.0.property.image', "string|null")
+                ->whereType('data.0.property.image', 'string|null')
                 ->etc();
         });
+    }
+
+    public function test_if_creating_a_new_booking_fails_if_unauthenticated(): void
+    {
+        $response = $this->postJson('/api/bookings', []);
+
+        $response->assertStatus(401);
+    }
+
+    public function test_if_creating_a_new_booking_fails_if_unauthorized(): void
+    {
+        $this->seed();
+
+        $user = \App\Models\User::factory()->create();
+
+        $this->actingAs($user);
+
+        $response = $this->postJson('/api/bookings', []);
+
+        $response->assertStatus(403);
+    }
+
+    public function test_if_creating_booking_fails_with_past_dates(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => '2020-01-01',
+            'endDate' => '2020-01-05',
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => Property::factory()->create()->id,
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_if_creating_booking_fails_with_start_date_bigger_than_end(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => now()->addDays(10)->format('Y-m-d'),
+            'endDate' => now()->format('Y-m-d'),
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => Property::factory()->create()->id,
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_if_creating_booking_fails_with_num_of_guests_bigger_than_configured(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $setting = \App\Models\Setting::first();
+        $maxGuestsPerBooking = $setting->maxGuestsPerBooking;
+
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addDay(5)->format('Y-m-d');
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'numGuests' => $maxGuestsPerBooking + 1,
+            'guest_id' => Guest::factory()->create()->id,
+            'property_id' => Property::factory()->create()->id,
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_if_creating_booking_fails_with_stay_small_than_configured(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $setting = \App\Models\Setting::first();
+        $minBookingLength = $setting->minBookingLength;
+
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addDay($minBookingLength - 1)->format('Y-m-d');
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => Property::factory()->create()->id,
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_if_creating_booking_fails_with_stay_longer_than_configured(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $setting = \App\Models\Setting::first();
+        $maxBookingLength = $setting->maxBookingLength;
+
+        $startDate = now()->format('Y-m-d');
+        $endDate = now()->addDay($maxBookingLength + 1)->format('Y-m-d');
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => $startDate,
+            'endDate' => $endDate,
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => Property::factory()->create()->id,
+        ]);
+
+        $response->assertStatus(422);
+    }
+
+    public function test_if_creating_booking_fails_with_already_booked_date(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $propertyId = Property::factory()->create()->id;
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => now()->addDays(1)->format('Y-m-d'),
+            'endDate' => now()->addDays(5)->format('Y-m-d'),
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => $propertyId,
+        ]);
+
+        $response->assertStatus(201);
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => now()->addDays(1)->format('Y-m-d'),
+            'endDate' => now()->addDays(5)->format('Y-m-d'),
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => $propertyId,
+        ]);
+        $response->assertStatus(422);
+    }
+
+    public function test_if_creating_booking_works(): void
+    {
+        $this->seed();
+
+        $this->actingAsAdmin();
+
+        $response = $this->postJson('/api/bookings', [
+            'startDate' => now()->addDays(1)->format('Y-m-d'),
+            'endDate' => now()->addDays(5)->format('Y-m-d'),
+            'numGuests' => 2,
+            'guest_id' => 1,
+            'property_id' => Property::factory()->create()->id,
+        ]);
+
+        $response->assertStatus(201);
+
+        $response->assertJson(function (AssertableJson $json) {
+            $json
+                ->has('success')
+                ->has('message')
+                ->whereType('data.id', 'integer')
+                ->whereType('data.startDate', 'string')
+                ->whereType('data.endDate', 'string')
+                ->whereType('data.numNights', 'integer')
+                ->whereType('data.numGuests', 'integer')
+                ->whereType('data.propertyPrice', 'integer|double')
+                ->whereType('data.extrasPrice', 'integer|double|null')
+                ->whereType('data.totalPrice', 'integer|double')
+                ->whereType('data.status', 'string')
+                ->whereType('data.isPaid', 'boolean')
+                ->whereType('data.hasBreakfast', 'boolean')
+                ->whereType('data.observations', 'string|null')
+                ->whereType('data.guest', 'array')
+                ->whereType('data.guest.id', 'integer')
+                ->whereType('data.guest.name', 'string')
+                ->whereType('data.guest.email', 'string')
+                ->whereType('data.guest.countryFlag', 'string')
+                ->whereType('data.property.id', 'integer')
+                ->whereType('data.property.name', 'string')
+                ->whereType('data.property.maxCapacity', 'integer')
+                ->whereType('data.property.regularPrice', 'double')
+                ->whereType('data.property.discount', 'integer|double|null')
+                ->whereType('data.property.description', 'string')
+                ->whereType('data.property.image', 'string|null')
+                ->etc();
+        });
+
     }
 }

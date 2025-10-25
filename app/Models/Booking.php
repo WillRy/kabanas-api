@@ -4,6 +4,7 @@ namespace App\Models;
 
 use App\Exceptions\BaseException;
 use App\Http\Resources\Api\Booking\BookingResource;
+use Carbon\Carbon;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsTo;
@@ -31,6 +32,8 @@ class Booking extends Model
     ];
 
     protected $casts = [
+        'numNights' => 'integer',
+        'numGuests' => 'integer',
         'startDate' => 'datetime',
         'endDate' => 'datetime',
         'propertyPrice' => 'float',
@@ -94,8 +97,6 @@ class Booking extends Model
         $this->status = 'checked-in';
         $this->isPaid = true;
 
-
-
         if ($this->hasBreakfast) {
             $this->extrasPrice = round($settings->breakfastPrice * $this->numNights * $this->numGuests, 2);
             $this->totalPrice = round($this->propertyPrice * $this->numNights + $this->extrasPrice, 2);
@@ -148,7 +149,7 @@ class Booking extends Model
             'sales' => $sales,
             'occupancyRate' => $occupancyRate,
             'confirmedStaysCount' => $confirmedStays->count(),
-            'confirmedStays' =>  BookingResource::collection($confirmedStays),
+            'confirmedStays' => BookingResource::collection($confirmedStays),
             'bookings' => BookingResource::collection($bookings),
         ];
     }
@@ -177,5 +178,71 @@ class Booking extends Model
         Gate::authorize('delete', $this);
 
         $this->delete();
+    }
+
+    public function createBooking(array $data)
+    {
+        Gate::authorize('create', Booking::class);
+
+        $booking = new Booking;
+
+        $date1 = new \DateTime($data['startDate']);
+        $date2 = new \DateTime($data['endDate']);
+        $nightsDays = $date2->diff($date1)->format('%a');
+
+        $property = Property::find($data['property_id']);
+
+        $setting = (new Setting)->getSettings();
+
+        if (empty($property)) {
+            throw new BaseException('Property not found.', 404);
+        }
+
+        if (Carbon::parse($data['startDate'])->lt(now()->startOfDay())) {
+            throw new BaseException('The start date must be today or a future date.', 422);
+        }
+
+        if (Carbon::parse($data['startDate'])->gt(Carbon::parse($data['endDate']))) {
+            throw new BaseException('The start date must be greather than end date.', 422);
+        }
+
+        if ($nightsDays < $setting->minBookingLength) {
+            throw new BaseException('The minimum stay is '.$setting->minBookingLength.' nights.', 422);
+        }
+
+        if ($nightsDays > $setting->maxBookingLength) {
+            throw new BaseException('The maximum stay is '.$setting->maxBookingLength.' nights.', 422);
+        }
+
+        if ($data['numGuests'] > $setting->maxGuestsPerBooking) {
+            throw new BaseException('The maximum number of guests for this property is '.$setting->maxGuestsPerBooking.'.', 422);
+        }
+
+        $alreadyBookedDatesInProperty = $property->getUnavailableDates($property->id);
+
+        if (in_array($date1->format('Y-m-d'), $alreadyBookedDatesInProperty) || in_array($date2->format('Y-m-d'), $alreadyBookedDatesInProperty)) {
+            throw new BaseException('The property is already booked for the selected dates.', 422);
+        }
+
+        $data = [
+            'startDate' => $data['startDate'],
+            'endDate' => $data['endDate'],
+            'numNights' => $nightsDays,
+            'numGuests' => $data['numGuests'],
+            'propertyPrice' => $property->regularPrice - $property->discount,
+            'extrasPrice' => 0,
+            'totalPrice' => ($property->regularPrice - $property->discount) * $nightsDays,
+            'status' => 'unconfirmed',
+            'hasBreakfast' => false,
+            'isPaid' => false,
+            'observations' => $data['observations'] ?? null,
+            'guest_id' => $data['guest_id'],
+            'property_id' => $data['property_id'],
+        ];
+
+        $booking->fill($data);
+        $booking->save();
+
+        return $booking;
     }
 }

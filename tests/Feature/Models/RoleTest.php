@@ -3,14 +3,13 @@
 namespace Tests\Feature\Models;
 
 use Illuminate\Foundation\Testing\RefreshDatabase;
-use Illuminate\Foundation\Testing\WithFaker;
 use Tests\TestCase;
 
 class RoleTest extends TestCase
 {
     use RefreshDatabase;
 
-    public function testRoleCanBeCreated(): void
+    public function test_role_can_be_created(): void
     {
         $roleData = [
             'name' => 'admin',
@@ -22,7 +21,7 @@ class RoleTest extends TestCase
         $this->assertDatabaseHas('roles', $roleData);
     }
 
-    public function testRoleCanHavePermissions(): void
+    public function test_role_can_have_permissions(): void
     {
         $roleData = [
             'name' => 'admin',

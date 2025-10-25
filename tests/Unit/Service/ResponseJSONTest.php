@@ -3,43 +3,42 @@
 namespace Tests\Unit\Service;
 
 use App\Service\ResponseJSON;
-use GuzzleHttp\Psr7\Response;
 use Illuminate\Http\JsonResponse;
 use Tests\TestCase;
 
 class ResponseJSONTest extends TestCase
 {
-
     protected array $statusCode = [100, 101, 200, 201, 202, 203, 204, 205, 206, 300, 301, 302, 303, 304, 305, 306, 307, 400, 401, 402, 403, 404, 405, 406, 407, 408, 409, 410, 411, 412, 413, 414, 415, 416, 417, 419, 422, 429, 500, 501, 502, 503, 504, 505];
-    public function testIfClassCouldReturnInstance(): void
+
+    public function test_if_class_could_return_instance(): void
     {
         $instance = \App\Service\ResponseJSON::getInstance();
         $this->assertInstanceOf(\App\Service\ResponseJSON::class, $instance);
     }
 
-    public function testIfClassReturnAllowedStatusCodeArray(): void
+    public function test_if_class_return_allowed_status_code_array(): void
     {
         $allowed = ResponseJSON::getAllowedStatus();
         $this->assertEqualsCanonicalizing($allowed, $this->statusCode);
     }
 
-    public function testIfNotChangedDataIsEmpty(): void
+    public function test_if_not_changed_data_is_empty(): void
     {
         $instance = ResponseJSON::getInstance();
         $this->assertEmpty($instance->getData());
     }
 
-    public function testIfCanSetData(): void
+    public function test_if_can_set_data(): void
     {
-        $instance = new ResponseJSON();
+        $instance = new ResponseJSON;
         $data = ['key' => 'value'];
         $instance->setData($data);
         $this->assertEquals($data, $instance->getData());
     }
 
-    public function testIfCanSetDataFromPaginator(): void
+    public function test_if_can_set_data_from_paginator(): void
     {
-        $response = new ResponseJSON();
+        $response = new ResponseJSON;
         $paginator = $this->createMock(\Illuminate\Pagination\LengthAwarePaginator::class);
         $paginator->method('currentPage')->willReturn(1);
         $paginator->method('perPage')->willReturn(10);
@@ -58,9 +57,9 @@ class ResponseJSONTest extends TestCase
         $this->assertEqualsCanonicalizing(['item1', 'item2'], $data['data']);
     }
 
-    public function testIfCanSetDataDirectlyFromPaginate(): void
+    public function test_if_can_set_data_directly_from_paginate(): void
     {
-        $response = new ResponseJSON();
+        $response = new ResponseJSON;
         $paginator = $this->createMock(\Illuminate\Pagination\LengthAwarePaginator::class);
         $paginator->method('currentPage')->willReturn(1);
         $paginator->method('perPage')->willReturn(10);
@@ -79,21 +78,21 @@ class ResponseJSONTest extends TestCase
         $this->assertEqualsCanonicalizing(['item1', 'item2'], $data['data']);
     }
 
-    public function testIfMessageIsNullByDefault(): void
+    public function test_if_message_is_null_by_default(): void
     {
         $instance = ResponseJSON::getInstance();
         $this->assertNull($instance->getMessage());
     }
 
-    public function testIfCanSetMessage(): void
+    public function test_if_can_set_message(): void
     {
         $instance = ResponseJSON::getInstance();
-        $message = "This is a test message.";
+        $message = 'This is a test message.';
         $instance->setMessage($message);
         $this->assertEquals($message, $instance->getMessage());
     }
 
-    public function testIfCanSetMessageUsingException(): void
+    public function test_if_can_set_message_using_exception(): void
     {
         $instance = ResponseJSON::getInstance();
         $exception = new \Exception('Error');
@@ -101,7 +100,7 @@ class ResponseJSONTest extends TestCase
         $this->assertEquals('Error', $instance->getMessage());
     }
 
-    public function testIfHideSensitiveErrorMessageWithoutDebugMode(): void
+    public function test_if_hide_sensitive_error_message_without_debug_mode(): void
     {
         config(['app.debug' => false]);
 
@@ -111,66 +110,66 @@ class ResponseJSONTest extends TestCase
         $this->assertEquals('Server Error', $instance->getMessage());
     }
 
-    public function testIfStatusCodeIs200ByDefault(): void
+    public function test_if_status_code_is200_by_default(): void
     {
         $response = ResponseJSON::getInstance();
         $this->assertEquals(200, $response->getStatusCode());
     }
 
-    public function testIfStatusCodeWillBeFixedWhenSetWrong(): void
+    public function test_if_status_code_will_be_fixed_when_set_wrong(): void
     {
         $response = ResponseJSON::getInstance();
         $response->setStatusCode(999);
         $this->assertEquals(500, $response->getStatusCode());
     }
 
-    public function testIfCanSetStatusCode(): void
+    public function test_if_can_set_status_code(): void
     {
         $response = ResponseJSON::getInstance();
         $response->setStatusCode(201);
         $this->assertEquals(201, $response->getStatusCode());
     }
 
-    public function testIfCanSetErrorFromException(): void
+    public function test_if_can_set_error_from_exception(): void
     {
         $response = ResponseJSON::getInstance();
-        $response->setError(new \Exception("Test exception", 403));
+        $response->setError(new \Exception('Test exception', 403));
         $this->assertFalse($response->getSuccess());
         $this->assertEquals(403, $response->getStatusCode());
-        $this->assertEquals("Test exception", $response->getMessage());
+        $this->assertEquals('Test exception', $response->getMessage());
     }
 
-    public function testIfCanSetErrorFromExceptionForcingStatusCode(): void
+    public function test_if_can_set_error_from_exception_forcing_status_code(): void
     {
         $response = ResponseJSON::getInstance();
-        $response->setError(new \Exception("Test exception", 403), 500);
+        $response->setError(new \Exception('Test exception', 403), 500);
 
         $response->setStatusCode(500);
 
         $this->assertFalse($response->getSuccess());
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals("Test exception", $response->getMessage());
+        $this->assertEquals('Test exception', $response->getMessage());
     }
 
-    public function testIfCanSetErrorFromString(): void
+    public function test_if_can_set_error_from_string(): void
     {
         $response = ResponseJSON::getInstance();
-        $response->setError("Test exception");
+        $response->setError('Test exception');
 
         $response->setStatusCode(500);
 
         $this->assertFalse($response->getSuccess());
         $this->assertEquals(500, $response->getStatusCode());
-        $this->assertEquals("Test exception", $response->getMessage());
+        $this->assertEquals('Test exception', $response->getMessage());
     }
 
-    public function testIfErrorsIsEmptyWhenNotSet(): void
+    public function test_if_errors_is_empty_when_not_set(): void
     {
         $response = ResponseJSON::getInstance();
         $this->assertEmpty($response->getErrors());
     }
 
-    public function testIfCanSetErrors(): void
+    public function test_if_can_set_errors(): void
     {
         $response = ResponseJSON::getInstance();
         $errors = ['field1' => 'error1', 'field2' => 'error2'];
@@ -178,7 +177,7 @@ class ResponseJSONTest extends TestCase
         $this->assertEquals($errors, $response->getErrors());
     }
 
-    public function testIfCanRemoveNumericKeysFromData(): void
+    public function test_if_can_remove_numeric_keys_from_data(): void
     {
         $data = [
             10 => 'value1',
@@ -207,7 +206,7 @@ class ResponseJSONTest extends TestCase
         $this->assertEqualsCanonicalizing($expected, $data);
     }
 
-    public function testIfRemoveNumericKeysDoesNotAffectNonNumericKeys(): void
+    public function test_if_remove_numeric_keys_does_not_affect_non_numeric_keys(): void
     {
         $data = [
             'key1' => 'value1',
@@ -232,7 +231,7 @@ class ResponseJSONTest extends TestCase
         $this->assertEqualsCanonicalizing($expected, $data);
     }
 
-    public function testIfRemoveNumericKeysDoestAffectEmptyArray(): void
+    public function test_if_remove_numeric_keys_doest_affect_empty_array(): void
     {
         $data = [];
 
@@ -243,30 +242,30 @@ class ResponseJSONTest extends TestCase
         $this->assertEqualsCanonicalizing($expected, $data);
     }
 
-    public function testIfRemoveNumericKeysDoestAffectNonArray(): void
+    public function test_if_remove_numeric_keys_doest_affect_non_array(): void
     {
-        $data = "This is a string";
+        $data = 'This is a string';
 
         $result = ResponseJSON::removeNumericKeys($data);
 
-        $this->assertEquals("This is a string", $result);
+        $this->assertEquals('This is a string', $result);
     }
 
-    public function testIfHideNumericFieldsIsFalseByDefault(): void
+    public function test_if_hide_numeric_fields_is_false_by_default(): void
     {
 
         $response = ResponseJSON::getInstance();
         $this->assertFalse($response->getHideNumericIndex());
     }
 
-    public function testIfCanSetHideNumericFields(): void
+    public function test_if_can_set_hide_numeric_fields(): void
     {
         $response = ResponseJSON::getInstance();
         $response->setHideNumericIndex(true);
         $this->assertTrue($response->getHideNumericIndex());
     }
 
-    public function testIfReturnJsonResponse(): void
+    public function test_if_return_json_response(): void
     {
         $response = ResponseJSON::getInstance();
         $response->setData(['key' => 'value']);
@@ -286,7 +285,7 @@ class ResponseJSONTest extends TestCase
         ]);
     }
 
-    public function testIfCanPreRender(): void
+    public function test_if_can_pre_render(): void
     {
         $response = ResponseJSON::getInstance();
         $response->setData(['key' => 'value']);
@@ -305,7 +304,7 @@ class ResponseJSONTest extends TestCase
         ], $preRendered);
     }
 
-    public function testIfCanRenderWithoutData(): void
+    public function test_if_can_render_without_data(): void
     {
         $response = ResponseJSON::getInstance();
         $response->setData(['key' => 'value']);
