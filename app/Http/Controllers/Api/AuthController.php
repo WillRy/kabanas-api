@@ -68,7 +68,7 @@ class AuthController extends Controller
     public function logout(Request $request): Response
     {
 
-        if (Auth::guard('sanctum')->check() && $request->user()->currentAccessToken()) {
+        if (Auth::guard('sanctum')->check() && $request->bearerToken()) {
             /** @var \App\Models\User $user */
             $user = $request->user();
 
